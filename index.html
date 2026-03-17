@@ -91,6 +91,55 @@
             font-weight: 400;
         }
 
+        /* ---- Sync Button ---- */
+        .sync-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+            padding: 8px 20px;
+            border: 1px solid var(--border-subtle);
+            border-radius: 100px;
+            background: var(--surface);
+            color: var(--text-2);
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: border-color 0.3s, background 0.3s, color 0.3s, transform 0.2s;
+        }
+
+        .sync-btn:hover {
+            border-color: var(--border);
+            background: var(--surface-2);
+            color: var(--text);
+            transform: translateY(-1px);
+        }
+
+        .sync-btn:active { transform: translateY(0); }
+
+        .sync-btn svg {
+            width: 15px;
+            height: 15px;
+            transition: transform 0.3s;
+        }
+
+        .sync-btn.syncing {
+            pointer-events: none;
+            color: var(--blue);
+            border-color: rgba(59,130,246,0.3);
+            background: var(--blue-glow);
+        }
+
+        .sync-btn.syncing svg {
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
         /* ---- Stats ---- */
         .stats {
             display: grid;
@@ -139,6 +188,157 @@
         .stat.pending::before { content: ''; position: absolute; inset: 0; background: var(--amber-glow); opacity: 0; transition: opacity 0.3s; }
         .stat.pending:hover::before { opacity: 1; }
 
+        /* ---- Delivery Calendar ---- */
+        .calendar-section {
+            margin-bottom: 32px;
+        }
+
+        .calendar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .calendar-header h2 {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            color: var(--text-2);
+        }
+
+        .calendar-header .cal-range {
+            font-size: 12px;
+            color: var(--text-3);
+            font-weight: 500;
+        }
+
+        .calendar-strip {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--surface-2) transparent;
+        }
+
+        .calendar-strip::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .calendar-strip::-webkit-scrollbar-thumb {
+            background: var(--surface-2);
+            border-radius: 2px;
+        }
+
+        .calendar-strip::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .cal-day {
+            flex: 0 0 auto;
+            width: 68px;
+            padding: 12px 8px;
+            background: var(--surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s, background 0.3s, transform 0.2s, opacity 0.3s;
+            position: relative;
+            user-select: none;
+        }
+
+        .cal-day:hover {
+            border-color: var(--border);
+            transform: translateY(-2px);
+        }
+
+        .cal-day.past {
+            opacity: 0.4;
+        }
+
+        .cal-day.past:hover {
+            opacity: 0.7;
+        }
+
+        .cal-day.no-deliveries {
+            opacity: 0.35;
+        }
+
+        .cal-day.no-deliveries:hover {
+            opacity: 0.6;
+        }
+
+        .cal-day.today {
+            border-color: var(--blue);
+            background: var(--blue-glow);
+            opacity: 1;
+        }
+
+        .cal-day.active {
+            border-color: var(--purple);
+            background: var(--purple-glow);
+            opacity: 1;
+        }
+
+        .cal-day .cal-weekday {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-3);
+            line-height: 1;
+        }
+
+        .cal-day.today .cal-weekday { color: var(--blue); }
+
+        .cal-day .cal-num {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1;
+            margin-top: 4px;
+            color: var(--text);
+        }
+
+        .cal-day.past .cal-num { color: var(--text-3); }
+        .cal-day.today .cal-num { color: var(--blue); }
+
+        .cal-day .cal-month {
+            font-size: 10px;
+            font-weight: 500;
+            color: var(--text-3);
+            margin-top: 2px;
+            line-height: 1;
+        }
+
+        .cal-day .cal-dot-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            margin-top: 8px;
+            min-height: 14px;
+        }
+
+        .cal-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .cal-dot.in-transit { background: var(--blue); }
+        .cal-dot.delivered { background: var(--green); }
+        .cal-dot.pending { background: var(--amber); }
+
+        .cal-count {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-2);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
         /* ---- Timeline ---- */
         .timeline-header {
             display: flex;
@@ -157,6 +357,24 @@
             font-size: 13px;
             color: var(--text-3);
             font-weight: 500;
+        }
+
+        .timeline-header .filter-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--purple);
+            background: var(--purple-glow);
+            padding: 4px 10px;
+            border-radius: 100px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .timeline-header .filter-badge:hover {
+            background: rgba(168,85,247,0.25);
         }
 
         .pkg-list {
@@ -250,6 +468,41 @@
         .pkg-meta a:hover {
             color: var(--blue);
             background: var(--blue-glow);
+        }
+
+        /* Item chips */
+        .pkg-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 8px;
+        }
+
+        .item-chip {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-3);
+            background: var(--surface-2);
+            padding: 3px 8px;
+            border-radius: 6px;
+            white-space: nowrap;
+            max-width: 220px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.4;
+        }
+
+        .item-chip.more {
+            color: var(--text-2);
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .item-chip.more:hover {
+            background: var(--blue-glow);
+            color: var(--blue);
         }
 
         .pkg-right {
@@ -430,6 +683,9 @@
             .stat .num { font-size: 24px; }
             .pkg-inner { grid-template-columns: 48px 1fr; gap: 12px; padding: 14px 16px; }
             .pkg-right { grid-column: 1 / -1; text-align: left; display: flex; align-items: center; gap: 12px; }
+            .cal-day { width: 58px; padding: 10px 6px; }
+            .cal-day .cal-num { font-size: 17px; }
+            .item-chip { max-width: 180px; }
         }
     </style>
 </head>
@@ -447,9 +703,18 @@
         </div>
         <h1><span class="accent">Drew's</span> Move</h1>
         <p class="subtitle">Every package, one dashboard</p>
+        <button class="sync-btn" id="syncBtn" onclick="handleSync()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 4 23 10 17 10"/>
+                <polyline points="1 20 1 14 7 14"/>
+                <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+            </svg>
+            <span class="sync-label">Sync Now</span>
+        </button>
     </div>
 
     <div id="stats" class="stats"></div>
+    <div id="calendar"></div>
     <div id="packages"></div>
 
     <div class="how-to animate-in" style="animation-delay: 0.3s">
@@ -470,22 +735,24 @@
 <script>
 const PACKAGES = [
     {
-        name: "IKEA KALLAX Shelf Unit",
-        carrier: "UPS",
-        tracking: "1Z999AA10123456784",
-        trackingUrl: "https://www.ups.com/track?tracknum=1Z999AA10123456784",
-        status: "in-transit",
-        estimatedDelivery: "2026-03-19",
-        from: "IKEA"
-    },
-    {
         name: "Amazon - Kitchen Essentials Box",
         carrier: "Amazon",
         tracking: "TBA934857201000",
         trackingUrl: "https://www.amazon.com/gp/your-account/order-history",
         status: "in-transit",
         estimatedDelivery: "2026-03-18",
-        from: "Amazon"
+        from: "Amazon",
+        items: ["OXO Good Grips Utensil Set", "Instant Pot Duo 7-in-1", "Brita Water Filter Pitcher"]
+    },
+    {
+        name: "IKEA KALLAX Shelf Unit",
+        carrier: "UPS",
+        tracking: "1Z999AA10123456784",
+        trackingUrl: "https://www.ups.com/track?tracknum=1Z999AA10123456784",
+        status: "in-transit",
+        estimatedDelivery: "2026-03-19",
+        from: "IKEA",
+        items: ["KALLAX Shelf Unit 4x2 White"]
     },
     {
         name: "Wayfair Couch (3-piece sectional)",
@@ -494,7 +761,8 @@ const PACKAGES = [
         trackingUrl: "https://www.fedex.com/fedextrack/?trknbr=794644790132",
         status: "pending",
         estimatedDelivery: "2026-03-22",
-        from: "Wayfair"
+        from: "Wayfair",
+        items: ["Honbay Reversible Sectional Sofa - Dark Grey"]
     },
     {
         name: "USPS - Mail Forwarding Bundle",
@@ -503,7 +771,8 @@ const PACKAGES = [
         trackingUrl: "https://tools.usps.com/go/TrackConfirmAction?tLabels=9400111899223100012345",
         status: "delivered",
         estimatedDelivery: "2026-03-16",
-        from: "USPS"
+        from: "USPS",
+        items: ["Forwarded Mail Bundle"]
     },
     {
         name: "Home Depot - Curtain Rods + Hardware",
@@ -512,11 +781,15 @@ const PACKAGES = [
         trackingUrl: "https://www.ups.com/track?tracknum=1Z999AA10987654321",
         status: "in-transit",
         estimatedDelivery: "2026-03-20",
-        from: "Home Depot"
+        from: "Home Depot",
+        items: ["Umbra Twilight Double Curtain Rod 66-120in", "Heavy Duty Wall Anchors 50pk", "3M Command Hooks Variety Pack"]
     }
 ];
 
 const LAST_UPDATED = "2026-03-17T12:00:00Z";
+
+// Calendar filter state
+let calendarFilterDate = null;
 
 function carrierClass(c) {
     c = c.toLowerCase();
@@ -548,10 +821,45 @@ function formatDate(dateStr) {
     return `<strong>${fmt}</strong> <span style="opacity:0.5">(${diff}d)</span>`;
 }
 
+function toDateKey(d) {
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
 function progress(s) {
     if (s === 'delivered') return 100;
     if (s === 'in-transit') return 65;
     return 20;
+}
+
+function renderItemChips(items) {
+    if (!items || items.length === 0) return '';
+    const maxShow = 3;
+    const visible = items.slice(0, maxShow);
+    const remaining = items.length - maxShow;
+    let html = '<div class="pkg-items">';
+    visible.forEach(item => {
+        html += `<span class="item-chip" title="${item}">${item}</span>`;
+    });
+    if (remaining > 0) {
+        html += `<span class="item-chip more" onclick="this.parentElement.dataset.expanded = 'true'; this.remove(); renderExpandedItems(this.parentElement, ${JSON.stringify(items).replace(/"/g, '&quot;')})">+${remaining} more</span>`;
+    }
+    html += '</div>';
+    return html;
+}
+
+function renderExpandedItems(container, items) {
+    // Handled inline via onclick below
+}
+
+// Sync button handler
+function handleSync() {
+    const btn = document.getElementById('syncBtn');
+    btn.classList.add('syncing');
+    btn.querySelector('.sync-label').textContent = 'Syncing...';
+    setTimeout(() => {
+        btn.classList.remove('syncing');
+        btn.querySelector('.sync-label').textContent = 'Sync Now';
+    }, 2000);
 }
 
 // Render stats
@@ -569,9 +877,98 @@ function renderStats() {
     `;
 }
 
+// Render calendar
+function renderCalendar() {
+    const el = document.getElementById('calendar');
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Build delivery map: dateKey -> array of packages
+    const deliveryMap = {};
+    PACKAGES.forEach(p => {
+        const key = p.estimatedDelivery;
+        if (!deliveryMap[key]) deliveryMap[key] = [];
+        deliveryMap[key].push(p);
+    });
+
+    // Generate 14 days starting from today
+    const days = [];
+    for (let i = 0; i < 14; i++) {
+        const d = new Date(today);
+        d.setDate(d.getDate() + i);
+        days.push(d);
+    }
+
+    const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    const rangeStart = days[0].toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const rangeEnd = days[days.length - 1].toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+    let html = `
+        <div class="calendar-section animate-in" style="animation-delay:0.22s">
+            <div class="calendar-header">
+                <h2>Delivery Calendar</h2>
+                <span class="cal-range">${rangeStart} - ${rangeEnd}</span>
+            </div>
+            <div class="calendar-strip">
+    `;
+
+    days.forEach(d => {
+        const key = toDateKey(d);
+        const isToday = key === toDateKey(today);
+        const isPast = d < today;
+        const pkgs = deliveryMap[key] || [];
+        const hasDeliveries = pkgs.length > 0;
+        const isActive = calendarFilterDate === key;
+
+        let classes = 'cal-day';
+        if (isToday) classes += ' today';
+        if (isPast && !isToday) classes += ' past';
+        if (!hasDeliveries && !isToday) classes += ' no-deliveries';
+        if (isActive) classes += ' active';
+
+        let dotsHtml = '';
+        if (hasDeliveries) {
+            if (pkgs.length <= 3) {
+                dotsHtml = pkgs.map(p => `<span class="cal-dot ${p.status}"></span>`).join('');
+            } else {
+                dotsHtml = `<span class="cal-count">${pkgs.length}</span>`;
+            }
+        }
+
+        html += `
+            <div class="${classes}" data-date="${key}" onclick="toggleCalendarFilter('${key}')">
+                <div class="cal-weekday">${weekdays[d.getDay()]}</div>
+                <div class="cal-num">${d.getDate()}</div>
+                <div class="cal-month">${months[d.getMonth()]}</div>
+                <div class="cal-dot-row">${dotsHtml}</div>
+            </div>
+        `;
+    });
+
+    html += '</div></div>';
+    el.innerHTML = html;
+}
+
+function toggleCalendarFilter(dateKey) {
+    if (calendarFilterDate === dateKey) {
+        calendarFilterDate = null;
+    } else {
+        calendarFilterDate = dateKey;
+    }
+    renderCalendar();
+    renderPackages();
+}
+
 // Render packages
 function renderPackages() {
     const el = document.getElementById('packages');
+
+    let filtered = PACKAGES;
+    if (calendarFilterDate) {
+        filtered = PACKAGES.filter(p => p.estimatedDelivery === calendarFilterDate);
+    }
 
     if (!PACKAGES.length) {
         el.innerHTML = `<div class="empty"><div class="empty-icon">&#128230;</div><h3>No packages yet</h3><p>Forward shipping emails to get started</p></div>`;
@@ -579,18 +976,30 @@ function renderPackages() {
     }
 
     const order = { 'in-transit': 0, 'pending': 1, 'delivered': 2 };
-    const sorted = [...PACKAGES].sort((a, b) => {
+    const sorted = [...filtered].sort((a, b) => {
         const sd = (order[a.status] ?? 3) - (order[b.status] ?? 3);
         return sd !== 0 ? sd : new Date(a.estimatedDelivery) - new Date(b.estimatedDelivery);
     });
 
+    const filterLabel = calendarFilterDate ? (() => {
+        const d = new Date(calendarFilterDate + 'T00:00:00');
+        return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    })() : null;
+
     el.innerHTML = `
         <div class="timeline-header">
             <h2>Shipments</h2>
-            <span class="count">${PACKAGES.length} packages</span>
+            <span class="count">
+                ${filterLabel
+                    ? `<span class="filter-badge" onclick="toggleCalendarFilter('${calendarFilterDate}')">${filterLabel} &times;</span>`
+                    : `${PACKAGES.length} packages`
+                }
+            </span>
         </div>
         <div class="pkg-list">
-            ${sorted.map((p, i) => `
+            ${sorted.length === 0
+                ? `<div class="empty" style="padding:32px 20px"><h3>No deliveries on this day</h3><p>Click the date again to show all packages</p></div>`
+                : sorted.map((p, i) => `
                 <div class="pkg animate-in" style="animation-delay:${0.1 + i * 0.06}s">
                     <div class="pkg-inner">
                         <div class="carrier ${carrierClass(p.carrier)}">${carrierIcon(p.carrier)}</div>
@@ -601,6 +1010,7 @@ function renderPackages() {
                                 <span class="dot">&middot;</span>
                                 <a href="${p.trackingUrl}" target="_blank" rel="noopener">${p.tracking}</a>
                             </div>
+                            ${renderItemChips(p.items)}
                         </div>
                         <div class="pkg-right">
                             <span class="pill ${p.status}"><span class="dot-indicator"></span>${p.status.replace('-', ' ')}</span>
@@ -612,9 +1022,25 @@ function renderPackages() {
             `).join('')}
         </div>
     `;
+
+    // Bind expand-more handlers
+    document.querySelectorAll('.item-chip.more').forEach(chip => {
+        chip.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const container = this.parentElement;
+            const pkgCard = container.closest('.pkg');
+            const pkgName = pkgCard.querySelector('.pkg-name').textContent;
+            const pkg = PACKAGES.find(p => p.name === pkgName);
+            if (!pkg) return;
+            container.innerHTML = pkg.items.map(item =>
+                `<span class="item-chip" title="${item}">${item}</span>`
+            ).join('');
+        });
+    });
 }
 
 renderStats();
+renderCalendar();
 renderPackages();
 document.getElementById('footer').textContent = `Last synced ${new Date(LAST_UPDATED).toLocaleString()}`;
 </script>
