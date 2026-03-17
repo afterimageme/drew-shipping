@@ -1,0 +1,16 @@
+[2026-03-17 11:07:08] ========== Email sync started ==========
+[2026-03-17 11:07:08] Step 1: Scanning Gmail via Claude CLI...
+[2026-03-17 11:07:08] ERROR: Claude CLI failed with exit code 127
+[2026-03-17 11:07:08] Claude stderr: /home/openclaw/drew-shipping/email_sync.sh: line 37: claude: command not found
+[2026-03-17 11:08:12] ========== Email sync started ==========
+[2026-03-17 11:08:12] Step 1: Scanning Gmail via Claude CLI...
+[2026-03-17 11:08:12] ERROR: Claude CLI failed with exit code 127
+[2026-03-17 11:08:12] Claude stderr: /home/openclaw/drew-shipping/email_sync.sh: line 37: claude: command not found
+[2026-03-17 11:37:01] ========== Email sync started ==========
+[2026-03-17 11:37:01] Step 1: Scanning Gmail via Claude CLI...
+[2026-03-17 11:37:01] ERROR: Claude CLI failed with exit code 127
+[2026-03-17 11:37:01] Claude stderr: /home/openclaw/drew-shipping/email_sync.sh: line 37: claude: command not found
+[2026-03-17 11:38:01] ========== Email sync started ==========
+[2026-03-17 11:38:01] Step 1: Scanning Gmail via Claude CLI...
+[2026-03-17 11:38:01] ERROR: Claude CLI failed with exit code 127
+[2026-03-17 11:38:01] Claude stderr: /home/openclaw/drew-shipping/email_sync.sh: line 37: claude: command not found
