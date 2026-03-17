@@ -3,286 +3,471 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drew's Moving Tracker</title>
+    <title>Drew's Move</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg: #09090b;
+            --surface: #18181b;
+            --surface-2: #27272a;
+            --border: #3f3f46;
+            --border-subtle: rgba(63,63,70,0.5);
+            --text: #fafafa;
+            --text-2: #a1a1aa;
+            --text-3: #71717a;
+            --blue: #3b82f6;
+            --blue-glow: rgba(59,130,246,0.15);
+            --green: #22c55e;
+            --green-glow: rgba(34,197,94,0.15);
+            --amber: #f59e0b;
+            --amber-glow: rgba(245,158,11,0.15);
+            --purple: #a855f7;
+            --purple-glow: rgba(168,85,247,0.15);
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0f172a;
-            color: #e2e8f0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .header {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border-bottom: 1px solid #334155;
-            padding: 24px 32px;
+        /* ---- Animated grain background ---- */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse 80% 60% at 50% -20%, rgba(59,130,246,0.08), transparent),
+                        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(168,85,247,0.06), transparent);
+            pointer-events: none;
+            z-index: 0;
         }
 
-        .header h1 {
+        .page { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 0 20px; }
+
+        /* ---- Hero ---- */
+        .hero {
+            padding: 48px 0 32px;
+            text-align: center;
+        }
+
+        .hero-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, var(--blue), var(--purple));
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 28px;
-            font-weight: 700;
-            color: #f8fafc;
+            box-shadow: 0 0 40px rgba(59,130,246,0.2), 0 0 80px rgba(168,85,247,0.1);
         }
 
-        .header h1 span {
-            background: linear-gradient(135deg, #38bdf8, #818cf8);
+        .hero h1 {
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+        }
+
+        .hero h1 .accent {
+            background: linear-gradient(135deg, var(--blue), var(--purple));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .header p {
-            color: #94a3b8;
-            margin-top: 4px;
-            font-size: 14px;
+        .hero .subtitle {
+            color: var(--text-3);
+            font-size: 15px;
+            margin-top: 8px;
+            font-weight: 400;
         }
 
-        .stats-bar {
-            display: flex;
-            gap: 16px;
-            padding: 20px 32px;
-            flex-wrap: wrap;
+        /* ---- Stats ---- */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 32px;
         }
 
-        .stat-card {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 12px;
-            padding: 16px 24px;
-            flex: 1;
-            min-width: 150px;
+        .stat {
+            background: var(--surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius);
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s, transform 0.2s;
         }
 
-        .stat-card .label {
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #64748b;
-            margin-bottom: 4px;
+        .stat:hover { border-color: var(--border); transform: translateY(-2px); }
+
+        .stat .num {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1;
         }
 
-        .stat-card .value {
-            font-size: 28px;
-            font-weight: 700;
-            color: #f8fafc;
-        }
-
-        .stat-card.in-transit .value { color: #38bdf8; }
-        .stat-card.delivered .value { color: #4ade80; }
-        .stat-card.pending .value { color: #fbbf24; }
-
-        .container {
-            padding: 0 32px 40px;
-        }
-
-        .section-title {
-            font-size: 18px;
+        .stat .lbl {
+            font-size: 11px;
             font-weight: 600;
-            color: #f8fafc;
-            margin: 24px 0 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-3);
+            margin-top: 6px;
         }
 
-        .package-list {
+        .stat.total .num { color: var(--text); }
+        .stat.transit .num { color: var(--blue); }
+        .stat.transit::before { content: ''; position: absolute; inset: 0; background: var(--blue-glow); opacity: 0; transition: opacity 0.3s; }
+        .stat.transit:hover::before { opacity: 1; }
+        .stat.delivered .num { color: var(--green); }
+        .stat.delivered::before { content: ''; position: absolute; inset: 0; background: var(--green-glow); opacity: 0; transition: opacity 0.3s; }
+        .stat.delivered:hover::before { opacity: 1; }
+        .stat.pending .num { color: var(--amber); }
+        .stat.pending::before { content: ''; position: absolute; inset: 0; background: var(--amber-glow); opacity: 0; transition: opacity 0.3s; }
+        .stat.pending:hover::before { opacity: 1; }
+
+        /* ---- Timeline ---- */
+        .timeline-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .timeline-header h2 {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        .timeline-header .count {
+            font-size: 13px;
+            color: var(--text-3);
+            font-weight: 500;
+        }
+
+        .pkg-list {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
-        .package-card {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 12px;
-            padding: 20px 24px;
+        /* ---- Package card ---- */
+        .pkg {
+            background: var(--surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius);
+            padding: 0;
+            overflow: hidden;
+            transition: border-color 0.3s, box-shadow 0.3s, transform 0.2s;
+            cursor: default;
+        }
+
+        .pkg:hover {
+            border-color: var(--border);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            transform: translateY(-1px);
+        }
+
+        .pkg-inner {
             display: grid;
-            grid-template-columns: auto 1fr auto;
+            grid-template-columns: 56px 1fr auto;
             gap: 16px;
             align-items: center;
-            transition: border-color 0.2s;
+            padding: 18px 20px;
         }
 
-        .package-card:hover {
-            border-color: #475569;
-        }
-
-        .carrier-badge {
+        /* Carrier icon */
+        .carrier {
             width: 48px;
             height: 48px;
-            border-radius: 10px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 700;
-            font-size: 13px;
-            color: #fff;
-            flex-shrink: 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+            font-size: 12px;
+            letter-spacing: 0.02em;
+            position: relative;
         }
 
-        .carrier-badge.ups { background: #6b4c00; color: #fbbf24; }
-        .carrier-badge.usps { background: #1e3a5f; color: #60a5fa; }
-        .carrier-badge.fedex { background: #3b1f6e; color: #c084fc; }
-        .carrier-badge.amazon { background: #1a3a2a; color: #4ade80; }
-        .carrier-badge.other { background: #334155; color: #94a3b8; }
+        .carrier.ups { background: rgba(245,158,11,0.12); color: var(--amber); }
+        .carrier.usps { background: rgba(59,130,246,0.12); color: var(--blue); }
+        .carrier.fedex { background: rgba(168,85,247,0.12); color: var(--purple); }
+        .carrier.amazon { background: rgba(34,197,94,0.12); color: var(--green); }
+        .carrier.other { background: var(--surface-2); color: var(--text-3); }
 
-        .package-info {
-            min-width: 0;
-        }
+        .carrier svg { width: 22px; height: 22px; }
 
-        .package-name {
-            font-size: 16px;
+        .pkg-body { min-width: 0; }
+
+        .pkg-name {
+            font-size: 15px;
             font-weight: 600;
-            color: #f8fafc;
-            margin-bottom: 4px;
+            color: var(--text);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            line-height: 1.3;
         }
 
-        .package-meta {
+        .pkg-meta {
             display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            margin-top: 4px;
             font-size: 13px;
-            color: #94a3b8;
+            color: var(--text-3);
         }
 
-        .package-meta a {
-            color: #38bdf8;
+        .pkg-meta .dot { opacity: 0.3; }
+
+        .pkg-meta a {
+            color: var(--text-2);
             text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            background: var(--surface-2);
+            padding: 2px 8px;
+            border-radius: 6px;
+            transition: color 0.2s, background 0.2s;
         }
 
-        .package-meta a:hover {
-            text-decoration: underline;
+        .pkg-meta a:hover {
+            color: var(--blue);
+            background: var(--blue-glow);
         }
 
-        .package-status {
+        .pkg-right {
             text-align: right;
             flex-shrink: 0;
         }
 
-        .status-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
+        /* Status pill */
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            border-radius: 100px;
+            font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.03em;
+            letter-spacing: 0.04em;
         }
 
-        .status-badge.in-transit { background: #0c4a6e; color: #38bdf8; }
-        .status-badge.delivered { background: #14532d; color: #4ade80; }
-        .status-badge.pending { background: #451a03; color: #fbbf24; }
-        .status-badge.unknown { background: #1e293b; color: #64748b; border: 1px solid #334155; }
+        .pill .dot-indicator {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
 
-        .delivery-date {
+        .pill.in-transit { background: var(--blue-glow); color: var(--blue); }
+        .pill.in-transit .dot-indicator { background: var(--blue); animation: pulse 2s infinite; }
+        .pill.delivered { background: var(--green-glow); color: var(--green); }
+        .pill.delivered .dot-indicator { background: var(--green); }
+        .pill.pending { background: var(--amber-glow); color: var(--amber); }
+        .pill.pending .dot-indicator { background: var(--amber); animation: pulse 3s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .eta {
             font-size: 13px;
-            color: #94a3b8;
+            color: var(--text-3);
             margin-top: 6px;
+            font-weight: 500;
         }
 
-        .delivery-date strong {
-            color: #e2e8f0;
+        .eta strong {
+            color: var(--text-2);
+            font-weight: 600;
         }
 
-        .empty-state {
+        /* Progress strip at bottom of card */
+        .progress-strip {
+            height: 2px;
+            background: var(--surface-2);
+        }
+
+        .progress-strip .bar {
+            height: 100%;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .progress-strip .bar.in-transit {
+            background: linear-gradient(90deg, var(--blue), var(--purple));
+        }
+        .progress-strip .bar.delivered {
+            background: var(--green);
+        }
+        .progress-strip .bar.pending {
+            background: var(--amber);
+        }
+
+        /* ---- How-to card ---- */
+        .how-to {
+            margin-top: 32px;
+            background: var(--surface);
+            border: 1px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
             text-align: center;
-            padding: 60px 20px;
-            color: #64748b;
         }
 
-        .empty-state .icon {
-            font-size: 48px;
-            margin-bottom: 16px;
-        }
-
-        .empty-state h3 {
-            color: #94a3b8;
+        .how-to .how-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-2);
             margin-bottom: 8px;
         }
 
-        .instructions {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 12px;
-            padding: 20px 24px;
-            margin-top: 24px;
-            font-size: 14px;
-            color: #94a3b8;
-            line-height: 1.7;
-        }
-
-        .instructions code {
-            background: #334155;
-            padding: 2px 8px;
-            border-radius: 4px;
-            color: #38bdf8;
+        .how-to p {
             font-size: 13px;
+            color: var(--text-3);
+            line-height: 1.6;
         }
 
-        .last-updated {
+        .how-to .email-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--surface-2);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 8px 16px;
+            margin-top: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--blue);
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .how-to .email-pill:hover {
+            border-color: var(--blue);
+            background: var(--blue-glow);
+        }
+
+        .how-to .email-pill .copy-icon {
+            width: 14px;
+            height: 14px;
+            opacity: 0.5;
+        }
+
+        /* ---- Footer ---- */
+        .footer {
             text-align: center;
-            color: #475569;
+            padding: 32px 0 48px;
             font-size: 12px;
-            padding: 24px;
+            color: var(--text-3);
+            opacity: 0.5;
         }
 
-        .progress-bar {
-            height: 3px;
-            background: #334155;
-            border-radius: 2px;
-            margin-top: 8px;
-            overflow: hidden;
+        /* ---- Empty state ---- */
+        .empty {
+            text-align: center;
+            padding: 64px 20px;
         }
 
-        .progress-bar .fill {
-            height: 100%;
-            border-radius: 2px;
-            transition: width 0.3s;
+        .empty-icon {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 20px;
+            background: var(--surface);
+            border: 1px dashed var(--border);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
         }
 
-        .progress-bar .fill.in-transit { background: #38bdf8; }
-        .progress-bar .fill.delivered { background: #4ade80; }
-        .progress-bar .fill.pending { background: #fbbf24; }
+        .empty h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-2);
+            margin-bottom: 6px;
+        }
 
+        .empty p {
+            font-size: 14px;
+            color: var(--text-3);
+        }
+
+        /* ---- Staggered entrance animation ---- */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-in {
+            animation: fadeUp 0.4s ease-out both;
+        }
+
+        /* ---- Responsive ---- */
         @media (max-width: 640px) {
-            .header, .stats-bar, .container { padding-left: 16px; padding-right: 16px; }
-            .package-card { grid-template-columns: auto 1fr; }
-            .package-status { grid-column: 1 / -1; text-align: left; }
-            .stats-bar { gap: 8px; }
-            .stat-card { padding: 12px 16px; }
-            .stat-card .value { font-size: 22px; }
+            .hero { padding: 32px 0 24px; }
+            .hero h1 { font-size: 28px; }
+            .stats { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .stat { padding: 16px; }
+            .stat .num { font-size: 24px; }
+            .pkg-inner { grid-template-columns: 48px 1fr; gap: 12px; padding: 14px 16px; }
+            .pkg-right { grid-column: 1 / -1; text-align: left; display: flex; align-items: center; gap: 12px; }
         }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <h1><span>Drew's</span> Moving Tracker</h1>
-    <p>All shipments in one place. Forward shipping emails to get started.</p>
-</div>
-
-<div class="stats-bar" id="stats-bar">
-    <!-- Populated by JS -->
-</div>
-
-<div class="container">
-    <div id="package-list">
-        <!-- Populated by JS -->
+<div class="page">
+    <div class="hero animate-in">
+        <div class="hero-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="1" y="3" width="15" height="13"/>
+                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+                <circle cx="5.5" cy="18.5" r="2.5"/>
+                <circle cx="18.5" cy="18.5" r="2.5"/>
+            </svg>
+        </div>
+        <h1><span class="accent">Drew's</span> Move</h1>
+        <p class="subtitle">Every package, one dashboard</p>
     </div>
 
-    <div class="instructions">
-        <strong style="color: #e2e8f0;">How to add packages:</strong><br>
-        Forward any shipping confirmation or tracking email to<br>
-        <code>mwhite57+drewshipping@gmail.com</code><br>
-        Packages will appear here after the next sync.
+    <div id="stats" class="stats"></div>
+    <div id="packages"></div>
+
+    <div class="how-to animate-in" style="animation-delay: 0.3s">
+        <div class="how-title">Add packages</div>
+        <p>Forward any shipping or tracking email to</p>
+        <div class="email-pill" onclick="navigator.clipboard.writeText('mwhite57+drewshipping@gmail.com').then(()=>{this.querySelector('.copy-text').textContent='Copied!'})">
+            <span class="copy-text">mwhite57+drewshipping@gmail.com</span>
+            <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+        </div>
     </div>
 
-    <div class="last-updated" id="last-updated"></div>
+    <div class="footer" id="footer"></div>
 </div>
 
 <script>
-// Package data — this gets replaced by the sync script
 const PACKAGES = [
     {
         name: "IKEA KALLAX Shelf Unit",
@@ -333,129 +518,105 @@ const PACKAGES = [
 
 const LAST_UPDATED = "2026-03-17T12:00:00Z";
 
-function carrierClass(carrier) {
-    const c = carrier.toLowerCase();
-    if (c.includes('ups')) return 'ups';
+function carrierClass(c) {
+    c = c.toLowerCase();
     if (c.includes('usps')) return 'usps';
+    if (c.includes('ups')) return 'ups';
     if (c.includes('fedex')) return 'fedex';
     if (c.includes('amazon')) return 'amazon';
     return 'other';
 }
 
-function carrierLabel(carrier) {
-    const c = carrier.toLowerCase();
-    if (c.includes('ups')) return 'UPS';
+function carrierIcon(c) {
+    c = c.toLowerCase();
     if (c.includes('usps')) return 'USPS';
+    if (c.includes('ups')) return 'UPS';
     if (c.includes('fedex')) return 'FDX';
     if (c.includes('amazon')) return 'AMZ';
-    return carrier.substring(0, 3).toUpperCase();
+    return c.substring(0, 3).toUpperCase();
 }
 
 function formatDate(dateStr) {
     const d = new Date(dateStr + 'T00:00:00');
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const diff = Math.round((d - today) / (1000 * 60 * 60 * 24));
-
-    const formatted = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-
-    if (diff === 0) return `<strong>Today</strong> (${formatted})`;
-    if (diff === 1) return `<strong>Tomorrow</strong> (${formatted})`;
-    if (diff < 0) return `<strong>${formatted}</strong>`;
-    return `<strong>${formatted}</strong> (in ${diff} days)`;
+    const diff = Math.round((d - today) / 86400000);
+    const fmt = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    if (diff === 0) return '<strong>Today</strong>';
+    if (diff === 1) return '<strong>Tomorrow</strong>';
+    if (diff < 0) return `<strong>${fmt}</strong>`;
+    return `<strong>${fmt}</strong> <span style="opacity:0.5">(${diff}d)</span>`;
 }
 
-function progressPercent(status) {
-    if (status === 'delivered') return 100;
-    if (status === 'in-transit') return 60;
+function progress(s) {
+    if (s === 'delivered') return 100;
+    if (s === 'in-transit') return 65;
     return 20;
 }
 
+// Render stats
 function renderStats() {
-    const inTransit = PACKAGES.filter(p => p.status === 'in-transit').length;
-    const delivered = PACKAGES.filter(p => p.status === 'delivered').length;
-    const pending = PACKAGES.filter(p => p.status === 'pending').length;
+    const t = PACKAGES.length;
+    const tr = PACKAGES.filter(p => p.status === 'in-transit').length;
+    const d = PACKAGES.filter(p => p.status === 'delivered').length;
+    const pe = PACKAGES.filter(p => p.status === 'pending').length;
 
-    document.getElementById('stats-bar').innerHTML = `
-        <div class="stat-card">
-            <div class="label">Total Packages</div>
-            <div class="value">${PACKAGES.length}</div>
-        </div>
-        <div class="stat-card in-transit">
-            <div class="label">In Transit</div>
-            <div class="value">${inTransit}</div>
-        </div>
-        <div class="stat-card delivered">
-            <div class="label">Delivered</div>
-            <div class="value">${delivered}</div>
-        </div>
-        <div class="stat-card pending">
-            <div class="label">Pending</div>
-            <div class="value">${pending}</div>
-        </div>
+    document.getElementById('stats').innerHTML = `
+        <div class="stat total animate-in" style="animation-delay:0.05s"><div class="num">${t}</div><div class="lbl">Total</div></div>
+        <div class="stat transit animate-in" style="animation-delay:0.1s"><div class="num">${tr}</div><div class="lbl">In Transit</div></div>
+        <div class="stat delivered animate-in" style="animation-delay:0.15s"><div class="num">${d}</div><div class="lbl">Delivered</div></div>
+        <div class="stat pending animate-in" style="animation-delay:0.2s"><div class="num">${pe}</div><div class="lbl">Pending</div></div>
     `;
 }
 
+// Render packages
 function renderPackages() {
-    const container = document.getElementById('package-list');
+    const el = document.getElementById('packages');
 
-    if (PACKAGES.length === 0) {
-        container.innerHTML = `
-            <div class="empty-state">
-                <div class="icon">&#128230;</div>
-                <h3>No packages yet</h3>
-                <p>Forward shipping emails to <strong>mwhite57+drewshipping@gmail.com</strong></p>
-            </div>
-        `;
+    if (!PACKAGES.length) {
+        el.innerHTML = `<div class="empty"><div class="empty-icon">&#128230;</div><h3>No packages yet</h3><p>Forward shipping emails to get started</p></div>`;
         return;
     }
 
-    // Sort: in-transit first, then pending, then delivered
     const order = { 'in-transit': 0, 'pending': 1, 'delivered': 2 };
     const sorted = [...PACKAGES].sort((a, b) => {
-        const statusDiff = (order[a.status] ?? 3) - (order[b.status] ?? 3);
-        if (statusDiff !== 0) return statusDiff;
-        return new Date(a.estimatedDelivery) - new Date(b.estimatedDelivery);
+        const sd = (order[a.status] ?? 3) - (order[b.status] ?? 3);
+        return sd !== 0 ? sd : new Date(a.estimatedDelivery) - new Date(b.estimatedDelivery);
     });
 
-    container.innerHTML = `
-        <div class="section-title">All Packages (${PACKAGES.length})</div>
-        <div class="package-list">
-            ${sorted.map(pkg => `
-                <div class="package-card">
-                    <div class="carrier-badge ${carrierClass(pkg.carrier)}">${carrierLabel(pkg.carrier)}</div>
-                    <div class="package-info">
-                        <div class="package-name">${pkg.name}</div>
-                        <div class="package-meta">
-                            <span>${pkg.carrier}</span>
-                            <a href="${pkg.trackingUrl}" target="_blank" rel="noopener">${pkg.tracking}</a>
-                            ${pkg.from ? `<span>from ${pkg.from}</span>` : ''}
+    el.innerHTML = `
+        <div class="timeline-header">
+            <h2>Shipments</h2>
+            <span class="count">${PACKAGES.length} packages</span>
+        </div>
+        <div class="pkg-list">
+            ${sorted.map((p, i) => `
+                <div class="pkg animate-in" style="animation-delay:${0.1 + i * 0.06}s">
+                    <div class="pkg-inner">
+                        <div class="carrier ${carrierClass(p.carrier)}">${carrierIcon(p.carrier)}</div>
+                        <div class="pkg-body">
+                            <div class="pkg-name">${p.name}</div>
+                            <div class="pkg-meta">
+                                <span>${p.carrier}</span>
+                                <span class="dot">&middot;</span>
+                                <a href="${p.trackingUrl}" target="_blank" rel="noopener">${p.tracking}</a>
+                            </div>
                         </div>
-                        <div class="progress-bar">
-                            <div class="fill ${pkg.status}" style="width: ${progressPercent(pkg.status)}%"></div>
+                        <div class="pkg-right">
+                            <span class="pill ${p.status}"><span class="dot-indicator"></span>${p.status.replace('-', ' ')}</span>
+                            <div class="eta">${p.status === 'delivered' ? 'Arrived' : 'Est.'} ${formatDate(p.estimatedDelivery)}</div>
                         </div>
                     </div>
-                    <div class="package-status">
-                        <span class="status-badge ${pkg.status}">${pkg.status.replace('-', ' ')}</span>
-                        <div class="delivery-date">
-                            ${pkg.status === 'delivered' ? 'Delivered' : 'Est. '} ${formatDate(pkg.estimatedDelivery)}
-                        </div>
-                    </div>
+                    <div class="progress-strip"><div class="bar ${p.status}" style="width:${progress(p.status)}%"></div></div>
                 </div>
             `).join('')}
         </div>
     `;
 }
 
-function renderLastUpdated() {
-    const d = new Date(LAST_UPDATED);
-    document.getElementById('last-updated').textContent =
-        `Last synced: ${d.toLocaleString()}`;
-}
-
 renderStats();
 renderPackages();
-renderLastUpdated();
+document.getElementById('footer').textContent = `Last synced ${new Date(LAST_UPDATED).toLocaleString()}`;
 </script>
 
 </body>
