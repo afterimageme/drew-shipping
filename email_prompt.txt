@@ -1,0 +1,32 @@
+You have access to Gmail via MCP tools. Your task is to find shipping/order confirmation emails and extract package data.
+
+INSTRUCTIONS:
+1. Search Gmail for emails matching: to:mwhite57+drewshipping@gmail.com
+   - Search for recent emails (last 7 days)
+   - Use gmail_search_messages with query "to:mwhite57+drewshipping@gmail.com newer_than:7d"
+
+2. For EACH email found, read the full message using gmail_read_message
+
+3. From each email, extract:
+   - name: A short human-readable label like "StoreName - Item Description"
+   - carrier: The shipping carrier (UPS, FedEx, USPS, Amazon, DHL, or "Other")
+   - tracking: The tracking number (if available, otherwise empty string)
+   - trackingUrl: A URL to track the package (if tracking number found, generate the appropriate carrier URL; otherwise empty string)
+   - status: "in-transit" if tracking number exists, "pending" if no tracking yet
+   - estimatedDelivery: Date in YYYY-MM-DD format (if mentioned), otherwise empty string
+   - from: The store/sender name (e.g. "Amazon", "Ruggable", "Article")
+   - items: An array of item name strings from the order
+   - orderNumber: The order/confirmation number (include any # prefix stripped)
+
+4. Tracking URL templates:
+   - UPS: https://www.ups.com/track?tracknum={tracking}
+   - FedEx: https://www.fedex.com/fedextrack/?trknbr={tracking}
+   - USPS: https://tools.usps.com/go/TrackConfirmAction?tLabels={tracking}
+   - Amazon: https://www.amazon.com/gp/your-account/order-history
+   - DHL: https://www.dhl.com/us-en/home/tracking.html?tracking-id={tracking}
+
+5. Output ONLY a valid JSON array. No markdown code fences. No explanation. No commentary.
+   If no emails are found, output: []
+
+Example output format:
+[{"name":"Amazon - Widget Pro","carrier":"Amazon","tracking":"TBA123456789000","trackingUrl":"https://www.amazon.com/gp/your-account/order-history","status":"in-transit","estimatedDelivery":"2026-03-20","from":"Amazon","items":["Widget Pro 2000"],"orderNumber":"112-3456789-0123456"}]
