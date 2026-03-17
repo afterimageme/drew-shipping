@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drew's Moving Tracker</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-bottom: 1px solid #334155;
+            padding: 24px 32px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #f8fafc;
+        }
+
+        .header h1 span {
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            color: #94a3b8;
+            margin-top: 4px;
+            font-size: 14px;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 16px;
+            padding: 20px 32px;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 16px 24px;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .stat-card .label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #f8fafc;
+        }
+
+        .stat-card.in-transit .value { color: #38bdf8; }
+        .stat-card.delivered .value { color: #4ade80; }
+        .stat-card.pending .value { color: #fbbf24; }
+
+        .container {
+            padding: 0 32px 40px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #f8fafc;
+            margin: 24px 0 12px;
+        }
+
+        .package-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .package-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 20px 24px;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 16px;
+            align-items: center;
+            transition: border-color 0.2s;
+        }
+
+        .package-card:hover {
+            border-color: #475569;
+        }
+
+        .carrier-badge {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .carrier-badge.ups { background: #6b4c00; color: #fbbf24; }
+        .carrier-badge.usps { background: #1e3a5f; color: #60a5fa; }
+        .carrier-badge.fedex { background: #3b1f6e; color: #c084fc; }
+        .carrier-badge.amazon { background: #1a3a2a; color: #4ade80; }
+        .carrier-badge.other { background: #334155; color: #94a3b8; }
+
+        .package-info {
+            min-width: 0;
+        }
+
+        .package-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #f8fafc;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .package-meta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .package-meta a {
+            color: #38bdf8;
+            text-decoration: none;
+        }
+
+        .package-meta a:hover {
+            text-decoration: underline;
+        }
+
+        .package-status {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .status-badge.in-transit { background: #0c4a6e; color: #38bdf8; }
+        .status-badge.delivered { background: #14532d; color: #4ade80; }
+        .status-badge.pending { background: #451a03; color: #fbbf24; }
+        .status-badge.unknown { background: #1e293b; color: #64748b; border: 1px solid #334155; }
+
+        .delivery-date {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-top: 6px;
+        }
+
+        .delivery-date strong {
+            color: #e2e8f0;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #64748b;
+        }
+
+        .empty-state .icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state h3 {
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .instructions {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-top: 24px;
+            font-size: 14px;
+            color: #94a3b8;
+            line-height: 1.7;
+        }
+
+        .instructions code {
+            background: #334155;
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: #38bdf8;
+            font-size: 13px;
+        }
+
+        .last-updated {
+            text-align: center;
+            color: #475569;
+            font-size: 12px;
+            padding: 24px;
+        }
+
+        .progress-bar {
+            height: 3px;
+            background: #334155;
+            border-radius: 2px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .progress-bar .fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.3s;
+        }
+
+        .progress-bar .fill.in-transit { background: #38bdf8; }
+        .progress-bar .fill.delivered { background: #4ade80; }
+        .progress-bar .fill.pending { background: #fbbf24; }
+
+        @media (max-width: 640px) {
+            .header, .stats-bar, .container { padding-left: 16px; padding-right: 16px; }
+            .package-card { grid-template-columns: auto 1fr; }
+            .package-status { grid-column: 1 / -1; text-align: left; }
+            .stats-bar { gap: 8px; }
+            .stat-card { padding: 12px 16px; }
+            .stat-card .value { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1><span>Drew's</span> Moving Tracker</h1>
+    <p>All shipments in one place. Forward shipping emails to get started.</p>
+</div>
+
+<div class="stats-bar" id="stats-bar">
+    <!-- Populated by JS -->
+</div>
+
+<div class="container">
+    <div id="package-list">
+        <!-- Populated by JS -->
+    </div>
+
+    <div class="instructions">
+        <strong style="color: #e2e8f0;">How to add packages:</strong><br>
+        Forward any shipping confirmation or tracking email to<br>
+        <code>mwhite57+drewshipping@gmail.com</code><br>
+        Packages will appear here after the next sync.
+    </div>
+
+    <div class="last-updated" id="last-updated"></div>
+</div>
+
+<script>
+// Package data — this gets replaced by the sync script
+const PACKAGES = [
+    {
+        name: "IKEA KALLAX Shelf Unit",
+        carrier: "UPS",
+        tracking: "1Z999AA10123456784",
+        trackingUrl: "https://www.ups.com/track?tracknum=1Z999AA10123456784",
+        status: "in-transit",
+        estimatedDelivery: "2026-03-19",
+        from: "IKEA"
+    },
+    {
+        name: "Amazon - Kitchen Essentials Box",
+        carrier: "Amazon",
+        tracking: "TBA934857201000",
+        trackingUrl: "https://www.amazon.com/gp/your-account/order-history",
+        status: "in-transit",
+        estimatedDelivery: "2026-03-18",
+        from: "Amazon"
+    },
+    {
+        name: "Wayfair Couch (3-piece sectional)",
+        carrier: "FedEx",
+        tracking: "794644790132",
+        trackingUrl: "https://www.fedex.com/fedextrack/?trknbr=794644790132",
+        status: "pending",
+        estimatedDelivery: "2026-03-22",
+        from: "Wayfair"
+    },
+    {
+        name: "USPS - Mail Forwarding Bundle",
+        carrier: "USPS",
+        tracking: "9400111899223100012345",
+        trackingUrl: "https://tools.usps.com/go/TrackConfirmAction?tLabels=9400111899223100012345",
+        status: "delivered",
+        estimatedDelivery: "2026-03-16",
+        from: "USPS"
+    },
+    {
+        name: "Home Depot - Curtain Rods + Hardware",
+        carrier: "UPS",
+        tracking: "1Z999AA10987654321",
+        trackingUrl: "https://www.ups.com/track?tracknum=1Z999AA10987654321",
+        status: "in-transit",
+        estimatedDelivery: "2026-03-20",
+        from: "Home Depot"
+    }
+];
+
+const LAST_UPDATED = "2026-03-17T12:00:00Z";
+
+function carrierClass(carrier) {
+    const c = carrier.toLowerCase();
+    if (c.includes('ups')) return 'ups';
+    if (c.includes('usps')) return 'usps';
+    if (c.includes('fedex')) return 'fedex';
+    if (c.includes('amazon')) return 'amazon';
+    return 'other';
+}
+
+function carrierLabel(carrier) {
+    const c = carrier.toLowerCase();
+    if (c.includes('ups')) return 'UPS';
+    if (c.includes('usps')) return 'USPS';
+    if (c.includes('fedex')) return 'FDX';
+    if (c.includes('amazon')) return 'AMZ';
+    return carrier.substring(0, 3).toUpperCase();
+}
+
+function formatDate(dateStr) {
+    const d = new Date(dateStr + 'T00:00:00');
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const diff = Math.round((d - today) / (1000 * 60 * 60 * 24));
+
+    const formatted = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+
+    if (diff === 0) return `<strong>Today</strong> (${formatted})`;
+    if (diff === 1) return `<strong>Tomorrow</strong> (${formatted})`;
+    if (diff < 0) return `<strong>${formatted}</strong>`;
+    return `<strong>${formatted}</strong> (in ${diff} days)`;
+}
+
+function progressPercent(status) {
+    if (status === 'delivered') return 100;
+    if (status === 'in-transit') return 60;
+    return 20;
+}
+
+function renderStats() {
+    const inTransit = PACKAGES.filter(p => p.status === 'in-transit').length;
+    const delivered = PACKAGES.filter(p => p.status === 'delivered').length;
+    const pending = PACKAGES.filter(p => p.status === 'pending').length;
+
+    document.getElementById('stats-bar').innerHTML = `
+        <div class="stat-card">
+            <div class="label">Total Packages</div>
+            <div class="value">${PACKAGES.length}</div>
+        </div>
+        <div class="stat-card in-transit">
+            <div class="label">In Transit</div>
+            <div class="value">${inTransit}</div>
+        </div>
+        <div class="stat-card delivered">
+            <div class="label">Delivered</div>
+            <div class="value">${delivered}</div>
+        </div>
+        <div class="stat-card pending">
+            <div class="label">Pending</div>
+            <div class="value">${pending}</div>
+        </div>
+    `;
+}
+
+function renderPackages() {
+    const container = document.getElementById('package-list');
+
+    if (PACKAGES.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="icon">&#128230;</div>
+                <h3>No packages yet</h3>
+                <p>Forward shipping emails to <strong>mwhite57+drewshipping@gmail.com</strong></p>
+            </div>
+        `;
+        return;
+    }
+
+    // Sort: in-transit first, then pending, then delivered
+    const order = { 'in-transit': 0, 'pending': 1, 'delivered': 2 };
+    const sorted = [...PACKAGES].sort((a, b) => {
+        const statusDiff = (order[a.status] ?? 3) - (order[b.status] ?? 3);
+        if (statusDiff !== 0) return statusDiff;
+        return new Date(a.estimatedDelivery) - new Date(b.estimatedDelivery);
+    });
+
+    container.innerHTML = `
+        <div class="section-title">All Packages (${PACKAGES.length})</div>
+        <div class="package-list">
+            ${sorted.map(pkg => `
+                <div class="package-card">
+                    <div class="carrier-badge ${carrierClass(pkg.carrier)}">${carrierLabel(pkg.carrier)}</div>
+                    <div class="package-info">
+                        <div class="package-name">${pkg.name}</div>
+                        <div class="package-meta">
+                            <span>${pkg.carrier}</span>
+                            <a href="${pkg.trackingUrl}" target="_blank" rel="noopener">${pkg.tracking}</a>
+                            ${pkg.from ? `<span>from ${pkg.from}</span>` : ''}
+                        </div>
+                        <div class="progress-bar">
+                            <div class="fill ${pkg.status}" style="width: ${progressPercent(pkg.status)}%"></div>
+                        </div>
+                    </div>
+                    <div class="package-status">
+                        <span class="status-badge ${pkg.status}">${pkg.status.replace('-', ' ')}</span>
+                        <div class="delivery-date">
+                            ${pkg.status === 'delivered' ? 'Delivered' : 'Est. '} ${formatDate(pkg.estimatedDelivery)}
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+function renderLastUpdated() {
+    const d = new Date(LAST_UPDATED);
+    document.getElementById('last-updated').textContent =
+        `Last synced: ${d.toLocaleString()}`;
+}
+
+renderStats();
+renderPackages();
+renderLastUpdated();
+</script>
+
+</body>
+</html>
