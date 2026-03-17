@@ -1,0 +1,52 @@
+[
+    {
+        "name": "Amazon - Kitchen Essentials Box",
+        "carrier": "Amazon",
+        "tracking": "TBA934857201000",
+        "trackingUrl": "https://www.amazon.com/gp/your-account/order-history",
+        "status": "in-transit",
+        "estimatedDelivery": "2026-03-18",
+        "from": "Amazon",
+        "items": ["OXO Good Grips Utensil Set", "Instant Pot Duo 7-in-1", "Brita Water Filter Pitcher"]
+    },
+    {
+        "name": "IKEA KALLAX Shelf Unit",
+        "carrier": "UPS",
+        "tracking": "1Z999AA10123456784",
+        "trackingUrl": "https://www.ups.com/track?tracknum=1Z999AA10123456784",
+        "status": "in-transit",
+        "estimatedDelivery": "2026-03-19",
+        "from": "IKEA",
+        "items": ["KALLAX Shelf Unit 4x2 White"]
+    },
+    {
+        "name": "Wayfair Couch (3-piece sectional)",
+        "carrier": "FedEx",
+        "tracking": "794644790132",
+        "trackingUrl": "https://www.fedex.com/fedextrack/?trknbr=794644790132",
+        "status": "pending",
+        "estimatedDelivery": "2026-03-22",
+        "from": "Wayfair",
+        "items": ["Honbay Reversible Sectional Sofa - Dark Grey"]
+    },
+    {
+        "name": "USPS - Mail Forwarding Bundle",
+        "carrier": "USPS",
+        "tracking": "9400111899223100012345",
+        "trackingUrl": "https://tools.usps.com/go/TrackConfirmAction?tLabels=9400111899223100012345",
+        "status": "delivered",
+        "estimatedDelivery": "2026-03-16",
+        "from": "USPS",
+        "items": ["Forwarded Mail Bundle"]
+    },
+    {
+        "name": "Home Depot - Curtain Rods + Hardware",
+        "carrier": "UPS",
+        "tracking": "1Z999AA10987654321",
+        "trackingUrl": "https://www.ups.com/track?tracknum=1Z999AA10987654321",
+        "status": "in-transit",
+        "estimatedDelivery": "2026-03-20",
+        "from": "Home Depot",
+        "items": ["Umbra Twilight Double Curtain Rod 66-120in", "Heavy Duty Wall Anchors 50pk", "3M Command Hooks Variety Pack"]
+    }
+]
