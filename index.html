@@ -624,6 +624,231 @@
             opacity: 0.5;
         }
 
+        /* ---- Add Package Button ---- */
+        .add-pkg-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+            margin-left: 10px;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 100px;
+            background: linear-gradient(135deg, var(--blue), #6366f1);
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: box-shadow 0.3s, transform 0.2s, filter 0.3s;
+            box-shadow: 0 0 20px rgba(59,130,246,0.3), 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .add-pkg-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 0 30px rgba(59,130,246,0.4), 0 6px 20px rgba(0,0,0,0.4);
+            filter: brightness(1.1);
+        }
+
+        .add-pkg-btn:active { transform: translateY(0); }
+
+        .add-pkg-btn svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        /* ---- Modal Overlay ---- */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-card {
+            width: 100%;
+            max-width: 480px;
+            margin: 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px;
+            position: relative;
+            transform: scale(0.95) translateY(10px);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 60px rgba(59,130,246,0.08);
+        }
+
+        .modal-overlay.open .modal-card {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface-2);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            color: var(--text-3);
+            cursor: pointer;
+            transition: color 0.2s, border-color 0.2s, background 0.2s;
+        }
+
+        .modal-close:hover {
+            color: var(--text);
+            border-color: var(--border);
+            background: var(--surface);
+        }
+
+        .modal-close svg { width: 16px; height: 16px; }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            margin-bottom: 6px;
+        }
+
+        .modal-subtitle {
+            font-size: 13px;
+            color: var(--text-3);
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-2);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group input::placeholder {
+            color: var(--text-3);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px var(--blue-glow), 0 0 16px var(--blue-glow);
+        }
+
+        .form-group select {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 36px;
+            cursor: pointer;
+        }
+
+        .form-group select option {
+            background: var(--surface);
+            color: var(--text);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .carrier-detected {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--green);
+            margin-top: 4px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .carrier-detected.visible {
+            opacity: 1;
+        }
+
+        .carrier-detected svg { width: 12px; height: 12px; }
+
+        .submit-btn {
+            width: 100%;
+            margin-top: 8px;
+            padding: 12px;
+            border: none;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, var(--blue), #6366f1);
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: box-shadow 0.3s, transform 0.2s, filter 0.3s;
+            box-shadow: 0 0 20px rgba(59,130,246,0.2);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 0 30px rgba(59,130,246,0.35);
+            filter: brightness(1.1);
+        }
+
+        .submit-btn:active { transform: translateY(0); }
+
+        .submit-btn svg {
+            width: 16px;
+            height: 16px;
+            vertical-align: -3px;
+            margin-right: 6px;
+        }
+
+        @media (max-width: 640px) {
+            .modal-card { padding: 20px; margin: 12px; }
+            .form-row { grid-template-columns: 1fr; }
+            .hero-buttons { flex-direction: column; align-items: center; }
+            .add-pkg-btn { margin-left: 0; }
+        }
+
         /* ---- Footer ---- */
         .footer {
             text-align: center;
@@ -703,14 +928,23 @@
         </div>
         <h1><span class="accent">Drew's</span> Move</h1>
         <p class="subtitle">Every package, one dashboard</p>
-        <button class="sync-btn" id="syncBtn" onclick="handleSync()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="23 4 23 10 17 10"/>
-                <polyline points="1 20 1 14 7 14"/>
-                <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
-            </svg>
-            <span class="sync-label">Sync Now</span>
-        </button>
+        <div class="hero-buttons" style="display:inline-flex;align-items:center;gap:0;flex-wrap:wrap;justify-content:center;">
+            <button class="sync-btn" id="syncBtn" onclick="handleSync()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="23 4 23 10 17 10"/>
+                    <polyline points="1 20 1 14 7 14"/>
+                    <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+                </svg>
+                <span class="sync-label">Sync Now</span>
+            </button>
+            <button class="add-pkg-btn" onclick="openAddModal()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                Add Package
+            </button>
+        </div>
     </div>
 
     <div id="stats" class="stats"></div>
@@ -732,75 +966,185 @@
     <div class="footer" id="footer"></div>
 </div>
 
+<!-- Add Package Modal -->
+<div class="modal-overlay" id="addModal" onclick="if(event.target===this)closeAddModal()">
+    <div class="modal-card">
+        <button class="modal-close" onclick="closeAddModal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+        </button>
+        <div class="modal-title">Add a Package</div>
+        <div class="modal-subtitle">Enter tracking details and we'll email it for processing.</div>
+        <form id="addPkgForm" onsubmit="return submitAddPkg(event)">
+            <div class="form-group">
+                <label for="pkgName">What did you order? *</label>
+                <input type="text" id="pkgName" placeholder="e.g. IKEA Bookshelf" required>
+            </div>
+            <div class="form-group">
+                <label for="pkgTracking">Tracking code (if you have one)</label>
+                <input type="text" id="pkgTracking" placeholder="e.g. 1Z999AA10123456784" oninput="detectCarrier(this.value)">
+                <div class="carrier-detected" id="carrierDetected">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span id="carrierDetectedText"></span>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="pkgCarrier">Carrier</label>
+                    <select id="pkgCarrier">
+                        <option value="Auto-detect">Auto-detect</option>
+                        <option value="UPS">UPS</option>
+                        <option value="USPS">USPS</option>
+                        <option value="FedEx">FedEx</option>
+                        <option value="Amazon">Amazon</option>
+                        <option value="DHL">DHL</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="pkgDelivery">Expected delivery</label>
+                    <input type="date" id="pkgDelivery">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="pkgStore">Where did you order from?</label>
+                <input type="text" id="pkgStore" placeholder="e.g. Amazon, Wayfair, IKEA">
+            </div>
+            <button type="submit" class="submit-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                Send Tracking Email
+            </button>
+        </form>
+    </div>
+</div>
+
 <script>
 const PACKAGES = [
     {
-        "name": "Amazon - Kitchen Essentials Box",
-        "carrier": "Amazon",
-        "tracking": "TBA934857201000",
-        "trackingUrl": "https://www.amazon.com/gp/your-account/order-history",
+        "name": "Letslighting - Arisha Bedside Sconces x2",
+        "carrier": "Other",
+        "tracking": "SDH0074702972",
+        "trackingUrl": "",
         "status": "in-transit",
-        "estimatedDelivery": "2026-03-18",
-        "from": "Amazon",
+        "estimatedDelivery": "",
+        "from": "Letslighting",
         "items": [
-            "OXO Good Grips Utensil Set",
-            "Instant Pot Duo 7-in-1",
-            "Brita Water Filter Pitcher"
-        ]
+            "Arisha Modern Rotatable Embedded Bedside Sconce, Cylindrical/Square x2 - Gold / Square Hidden Switch"
+        ],
+        "orderNumber": "US#3301"
     },
     {
-        "name": "IKEA KALLAX Shelf Unit",
-        "carrier": "UPS",
-        "tracking": "1Z999AA10123456784",
-        "trackingUrl": "https://www.ups.com/track?tracknum=1Z999AA10123456784",
-        "status": "in-transit",
-        "estimatedDelivery": "2026-03-19",
-        "from": "IKEA",
-        "items": [
-            "KALLAX Shelf Unit 4x2 White"
-        ]
-    },
-    {
-        "name": "Wayfair Couch (3-piece sectional)",
-        "carrier": "FedEx",
-        "tracking": "794644790132",
-        "trackingUrl": "https://www.fedex.com/fedextrack/?trknbr=794644790132",
+        "name": "Ruggable - Aldo Rug 8'x10'",
+        "carrier": "Other",
+        "tracking": "",
+        "trackingUrl": "",
         "status": "pending",
-        "estimatedDelivery": "2026-03-22",
-        "from": "Wayfair",
+        "estimatedDelivery": "",
+        "from": "Ruggable",
         "items": [
-            "Honbay Reversible Sectional Sofa - Dark Grey"
-        ]
+            "Aldo Indigo & Ochre Rug by The Local Project - 8'x10'"
+        ],
+        "orderNumber": "#10058832"
     },
     {
-        "name": "USPS - Mail Forwarding Bundle",
-        "carrier": "USPS",
-        "tracking": "9400111899223100012345",
-        "trackingUrl": "https://tools.usps.com/go/TrackConfirmAction?tLabels=9400111899223100012345",
-        "status": "delivered",
-        "estimatedDelivery": "2026-03-16",
-        "from": "USPS",
+        "name": "Article - Nera King Bed Set",
+        "carrier": "Other",
+        "tracking": "",
+        "trackingUrl": "",
+        "status": "pending",
+        "estimatedDelivery": "2026-03-30",
+        "from": "Article",
         "items": [
-            "Forwarded Mail Bundle"
-        ]
+            "Nera King Low Profile Bed with Nightstands Set - Walnut"
+        ],
+        "orderNumber": "#3611904",
+        "deliveryMethod": "White Glove"
     },
     {
-        "name": "Home Depot - Curtain Rods + Hardware",
-        "carrier": "UPS",
-        "tracking": "1Z999AA10987654321",
-        "trackingUrl": "https://www.ups.com/track?tracknum=1Z999AA10987654321",
-        "status": "in-transit",
+        "name": "BO-HA - Afli Wall Sconces x2",
+        "carrier": "FedEx",
+        "tracking": "",
+        "trackingUrl": "",
+        "status": "pending",
+        "estimatedDelivery": "2026-03-19",
+        "from": "BO-HA",
+        "items": [
+            "Afli Colorful Modern Wall Sconce x2 - Cream / Pink + Red / Hardwired"
+        ],
+        "orderNumber": "#14434"
+    },
+    {
+        "name": "Tonal - Home Gym System",
+        "carrier": "Other",
+        "tracking": "",
+        "trackingUrl": "",
+        "status": "pending",
+        "estimatedDelivery": "2026-03-30",
+        "from": "Tonal",
+        "items": [
+            "Tonal 2",
+            "Smart Accessories",
+            "Extended 5 Year Warranty"
+        ],
+        "orderNumber": "TON278039"
+    },
+    {
+        "name": "Ruggable - Inkdrop Lapis Blue Rug 9'x12'",
+        "carrier": "Other",
+        "tracking": "",
+        "trackingUrl": "",
+        "status": "pending",
+        "estimatedDelivery": "",
+        "from": "Ruggable",
+        "items": [
+            "Inkdrop Lapis Blue Rug by Jonathan Adler - 9'x12'"
+        ],
+        "orderNumber": "#10064658"
+    },
+    {
+        "name": "Ozarke - Trinity Flush Mount Light",
+        "carrier": "Other",
+        "tracking": "",
+        "trackingUrl": "",
+        "status": "pending",
         "estimatedDelivery": "2026-03-20",
-        "from": "Home Depot",
+        "from": "Ozarke",
         "items": [
-            "Umbra Twilight Double Curtain Rod 66-120in",
-            "Heavy Duty Wall Anchors 50pk",
-            "3M Command Hooks Variety Pack"
-        ]
+            "Trinity 14-in Semi-Flush Mount - Copper"
+        ],
+        "orderNumber": "#429952494"
+    },
+    {
+        "name": "Herman Miller - Nelson Floor Lamp",
+        "carrier": "FedEx",
+        "tracking": "",
+        "trackingUrl": "",
+        "status": "pending",
+        "estimatedDelivery": "2026-04-03",
+        "from": "Herman Miller",
+        "items": [
+            "Nelson Cigar Lotus Floor Lamp - Walnut / Medium"
+        ],
+        "orderNumber": "HM02057421"
+    },
+    {
+        "name": "CA Modern Home - Hunker Bed King",
+        "carrier": "Other",
+        "tracking": "",
+        "trackingUrl": "",
+        "status": "pending",
+        "estimatedDelivery": "2026-03-25",
+        "from": "CA Modern Home",
+        "items": [
+            "Hunker Bed King - Copper Velvet / White Oak"
+        ],
+        "orderNumber": "CA_22460"
     }
 ];
 
-const LAST_UPDATED = "2026-03-17T16:53:04+00:00";
+const LAST_UPDATED = "2026-03-17T17:26:01+00:00";
 
 // Calendar filter state
 let calendarFilterDate = null;
@@ -824,7 +1168,9 @@ function carrierIcon(c) {
 }
 
 function formatDate(dateStr) {
+    if (!dateStr) return '<span style="opacity:0.5">TBD</span>';
     const d = new Date(dateStr + 'T00:00:00');
+    if (isNaN(d.getTime())) return '<span style="opacity:0.5">TBD</span>';
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const diff = Math.round((d - today) / 86400000);
@@ -1021,8 +1367,7 @@ function renderPackages() {
                             <div class="pkg-name">${p.name}</div>
                             <div class="pkg-meta">
                                 <span>${p.carrier}</span>
-                                <span class="dot">&middot;</span>
-                                <a href="${p.trackingUrl}" target="_blank" rel="noopener">${p.tracking}</a>
+                                ${p.tracking ? `<span class="dot">&middot;</span><a href="${p.trackingUrl || '#'}" target="_blank" rel="noopener">${p.tracking}</a>` : (p.orderNumber ? `<span class="dot">&middot;</span><span>Order ${p.orderNumber}</span>` : '')}
                             </div>
                             ${renderItemChips(p.items)}
                         </div>
@@ -1051,6 +1396,85 @@ function renderPackages() {
             ).join('');
         });
     });
+}
+
+// ---- Add Package Modal ----
+function openAddModal() {
+    document.getElementById('addModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => document.getElementById('pkgName').focus(), 100);
+}
+
+function closeAddModal() {
+    document.getElementById('addModal').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+// Close modal on Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeAddModal();
+});
+
+// Auto-detect carrier from tracking number
+function detectCarrier(value) {
+    const v = value.trim();
+    const select = document.getElementById('pkgCarrier');
+    const badge = document.getElementById('carrierDetected');
+    const badgeText = document.getElementById('carrierDetectedText');
+    let detected = null;
+
+    if (/^1Z/i.test(v) && v.length >= 10) {
+        detected = 'UPS';
+    } else if (/^(94|93|92|95)\d{18,}/.test(v)) {
+        detected = 'USPS';
+    } else if (/^TBA/i.test(v)) {
+        detected = 'Amazon';
+    } else if (/^\d{12,22}$/.test(v)) {
+        detected = 'FedEx';
+    }
+
+    if (detected) {
+        select.value = detected;
+        badge.classList.add('visible');
+        badgeText.textContent = detected + ' detected';
+    } else {
+        badge.classList.remove('visible');
+        // Only reset if it was auto-set (still on Auto-detect or a detected value)
+        if (select.value === 'Auto-detect') {
+            // leave as is
+        }
+    }
+}
+
+function submitAddPkg(e) {
+    e.preventDefault();
+
+    const name = document.getElementById('pkgName').value.trim();
+    const tracking = document.getElementById('pkgTracking').value.trim();
+    const carrier = document.getElementById('pkgCarrier').value;
+    const store = document.getElementById('pkgStore').value.trim();
+    const delivery = document.getElementById('pkgDelivery').value;
+
+    const subject = encodeURIComponent('TRACKING: ' + name);
+
+    let bodyLines = [];
+    bodyLines.push('ITEM: ' + name);
+    bodyLines.push('TRACKING: ' + (tracking || '(none)'));
+    bodyLines.push('CARRIER: ' + carrier);
+    bodyLines.push('STORE: ' + (store || '(none)'));
+    bodyLines.push('DELIVERY: ' + (delivery || '(none)'));
+
+    const body = encodeURIComponent(bodyLines.join('\n'));
+    const mailto = 'mailto:mwhite57+drewshipping@gmail.com?subject=' + subject + '&body=' + body;
+
+    window.location.href = mailto;
+
+    // Reset form and close after a short delay
+    setTimeout(() => {
+        document.getElementById('addPkgForm').reset();
+        document.getElementById('carrierDetected').classList.remove('visible');
+        closeAddModal();
+    }, 500);
 }
 
 renderStats();
