@@ -7,7 +7,9 @@
         "status": "in-transit",
         "estimatedDelivery": "",
         "from": "Letslighting",
-        "items": ["Arisha Modern Rotatable Embedded Bedside Sconce, Cylindrical/Square x2 - Gold / Square Hidden Switch"],
+        "items": [
+            "Arisha Modern Rotatable Embedded Bedside Sconce, Cylindrical/Square x2 - Gold / Square Hidden Switch"
+        ],
         "orderNumber": "US#3301"
     },
     {
@@ -18,7 +20,9 @@
         "status": "pending",
         "estimatedDelivery": "",
         "from": "Ruggable",
-        "items": ["Aldo Indigo & Ochre Rug by The Local Project - 8'x10'"],
+        "items": [
+            "Aldo Indigo & Ochre Rug by The Local Project - 8'x10'"
+        ],
         "orderNumber": "#10058832"
     },
     {
@@ -29,7 +33,9 @@
         "status": "pending",
         "estimatedDelivery": "2026-03-30",
         "from": "Article",
-        "items": ["Nera King Low Profile Bed with Nightstands Set - Walnut"],
+        "items": [
+            "Nera King Low Profile Bed with Nightstands Set - Walnut"
+        ],
         "orderNumber": "#3611904",
         "deliveryMethod": "White Glove"
     },
@@ -41,7 +47,9 @@
         "status": "pending",
         "estimatedDelivery": "2026-03-19",
         "from": "BO-HA",
-        "items": ["Afli Colorful Modern Wall Sconce x2 - Cream / Pink + Red / Hardwired"],
+        "items": [
+            "Afli Colorful Modern Wall Sconce x2 - Cream / Pink + Red / Hardwired"
+        ],
         "orderNumber": "#14434"
     },
     {
@@ -52,7 +60,11 @@
         "status": "pending",
         "estimatedDelivery": "2026-03-30",
         "from": "Tonal",
-        "items": ["Tonal 2", "Smart Accessories", "Extended 5 Year Warranty"],
+        "items": [
+            "Tonal 2",
+            "Smart Accessories",
+            "Extended 5 Year Warranty"
+        ],
         "orderNumber": "TON278039"
     },
     {
@@ -63,7 +75,9 @@
         "status": "pending",
         "estimatedDelivery": "",
         "from": "Ruggable",
-        "items": ["Inkdrop Lapis Blue Rug by Jonathan Adler - 9'x12'"],
+        "items": [
+            "Inkdrop Lapis Blue Rug by Jonathan Adler - 9'x12'"
+        ],
         "orderNumber": "#10064658"
     },
     {
@@ -74,7 +88,9 @@
         "status": "pending",
         "estimatedDelivery": "2026-03-20",
         "from": "Ozarke",
-        "items": ["Trinity 14-in Semi-Flush Mount - Copper"],
+        "items": [
+            "Trinity 14-in Semi-Flush Mount - Copper"
+        ],
         "orderNumber": "#429952494"
     },
     {
@@ -85,7 +101,9 @@
         "status": "pending",
         "estimatedDelivery": "2026-04-03",
         "from": "Herman Miller",
-        "items": ["Nelson Cigar Lotus Floor Lamp - Walnut / Medium"],
+        "items": [
+            "Nelson Cigar Lotus Floor Lamp - Walnut / Medium"
+        ],
         "orderNumber": "HM02057421"
     },
     {
@@ -96,7 +114,9 @@
         "status": "pending",
         "estimatedDelivery": "2026-03-25",
         "from": "CA Modern Home",
-        "items": ["Hunker Bed King - Copper Velvet / White Oak"],
+        "items": [
+            "Hunker Bed King - Copper Velvet / White Oak"
+        ],
         "orderNumber": "CA_22460"
     },
     {
@@ -107,7 +127,22 @@
         "status": "in-transit",
         "estimatedDelivery": "",
         "from": "Design Within Reach",
-        "items": ["Emma Fireplace Tools"],
+        "items": [
+            "Emma Fireplace Tools"
+        ],
         "orderNumber": "DWR7803139"
+    },
+    {
+        "name": "Letslighting - Bedside Sconces",
+        "carrier": "Other",
+        "tracking": "SDH0074702972",
+        "trackingUrl": "",
+        "status": "in-transit",
+        "estimatedDelivery": "",
+        "from": "Letslighting",
+        "items": [
+            "Arisha Modern Rotatable Embedded Bedside Sconce (Gold / Square Hidden Switch) x2"
+        ],
+        "orderNumber": "US3301"
     }
 ]
