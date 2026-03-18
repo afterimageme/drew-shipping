@@ -192,33 +192,7 @@
         "trackingUrl": "",
         "status": "in-transit",
         "estimatedDelivery": "2026-03-20",
-        "from": "NordicTrack",
-        "items": [
-            "NordicTrack"
-        ],
-        "orderNumber": ""
-    },
-    {
-        "name": "NordicTrack",
-        "carrier": "Other",
-        "tracking": "87007047",
-        "trackingUrl": "",
-        "status": "in-transit",
-        "estimatedDelivery": "2026-03-20",
-        "from": "NordicTrack",
-        "items": [
-            "NordicTrack"
-        ],
-        "orderNumber": ""
-    },
-    {
-        "name": "NordicTrack",
-        "carrier": "Other",
-        "tracking": "87007047",
-        "trackingUrl": "",
-        "status": "in-transit",
-        "estimatedDelivery": "2026-03-20",
-        "from": "NordicTrack",
+        "from": "Nordic Track",
         "items": [
             "NordicTrack"
         ],
