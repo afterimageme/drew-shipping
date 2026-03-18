@@ -14,11 +14,11 @@
     },
     {
         "name": "Ruggable - Aldo Rug 8'x10'",
-        "carrier": "Other",
-        "tracking": "",
-        "trackingUrl": "",
-        "status": "pending",
-        "estimatedDelivery": "",
+        "carrier": "FedEx",
+        "tracking": "399714514878",
+        "trackingUrl": "https://www.fedex.com/fedextrack/?trknbr=399714514878",
+        "status": "in-transit",
+        "estimatedDelivery": "2026-03-21",
         "from": "Ruggable",
         "items": [
             "Aldo Indigo & Ochre Rug by The Local Project - 8'x10'"
