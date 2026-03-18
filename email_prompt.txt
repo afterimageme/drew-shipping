@@ -7,7 +7,9 @@ INSTRUCTIONS:
 
 2. For EACH email found, read the full message using gmail_read_message
 
-3. From each email, extract:
+3. Some emails have subject "TRACKING UPDATE:" - these are updates to existing packages. The body may include an ORDER: line with the order number. Make sure to include this orderNumber in the output so the merge can match it to the existing package.
+
+4. From each email, extract:
    - name: A short human-readable label like "StoreName - Item Description"
    - carrier: The shipping carrier (UPS, FedEx, USPS, Amazon, DHL, or "Other")
    - tracking: The tracking number (if available, otherwise empty string)
@@ -18,14 +20,14 @@ INSTRUCTIONS:
    - items: An array of item name strings from the order
    - orderNumber: The order/confirmation number (include any # prefix stripped)
 
-4. Tracking URL templates:
+5. Tracking URL templates:
    - UPS: https://www.ups.com/track?tracknum={tracking}
    - FedEx: https://www.fedex.com/fedextrack/?trknbr={tracking}
    - USPS: https://tools.usps.com/go/TrackConfirmAction?tLabels={tracking}
    - Amazon: https://www.amazon.com/gp/your-account/order-history
    - DHL: https://www.dhl.com/us-en/home/tracking.html?tracking-id={tracking}
 
-5. Output ONLY a valid JSON array. No markdown code fences. No explanation. No commentary.
+6. Output ONLY a valid JSON array. No markdown code fences. No explanation. No commentary.
    If no emails are found, output: []
 
 Example output format:

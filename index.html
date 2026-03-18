@@ -1278,7 +1278,7 @@ const PACKAGES = [
     }
 ];
 
-const LAST_UPDATED = "2026-03-18T19:01:33+00:00";
+const LAST_UPDATED = "2026-03-18T19:48:06+00:00";
 
 // Calendar filter state
 let calendarFilterDate = null;
@@ -1535,6 +1535,7 @@ function renderPackages() {
 
 // ---- Add Package Modal ----
 let isUpdateMode = false;
+let updatePackageIndex = -1;
 
 function openAddModal() {
     isUpdateMode = false;
@@ -1551,6 +1552,7 @@ function openUpdateTracking(index) {
     const p = PACKAGES[index];
     if (!p) return;
     isUpdateMode = true;
+    updatePackageIndex = index;
 
     document.querySelector('.modal-title').textContent = 'Update Tracking';
     document.querySelector('.modal-subtitle').textContent = 'Add a tracking number for ' + p.name;
@@ -1574,6 +1576,7 @@ function closeAddModal() {
     document.getElementById('addModal').classList.remove('open');
     document.body.style.overflow = '';
     isUpdateMode = false;
+    updatePackageIndex = -1;
 }
 
 // Close modal on Escape key
@@ -1629,6 +1632,10 @@ function submitAddPkg(e) {
     bodyLines.push('CARRIER: ' + carrier);
     bodyLines.push('STORE: ' + (store || '(none)'));
     bodyLines.push('DELIVERY: ' + (delivery || '(none)'));
+    if (isUpdateMode && updatePackageIndex >= 0) {
+        const orderNum = PACKAGES[updatePackageIndex].orderNumber || '';
+        if (orderNum) bodyLines.push('ORDER: ' + orderNum);
+    }
 
     const body = encodeURIComponent(bodyLines.join('\n'));
     const mailto = 'mailto:mwhite57+drewshipping@gmail.com?subject=' + subject + '&body=' + body;

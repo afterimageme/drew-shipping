@@ -29,10 +29,15 @@ def merge_packages(existing: list[dict], new_packages: list[dict]) -> list[dict]
     """
     # Build lookup of existing packages by normalized order number
     order_index: dict[str, int] = {}
+    name_index: dict[str, int] = {}
     for i, pkg in enumerate(existing):
         norm = normalize_order_number(pkg.get("orderNumber", ""))
         if norm:
             order_index[norm] = i
+        # Also index by normalized name for fallback matching
+        pkg_name = pkg.get("name", "").strip().lower()
+        if pkg_name:
+            name_index[pkg_name] = i
 
     merged = list(existing)  # shallow copy
     added = 0
@@ -40,10 +45,18 @@ def merge_packages(existing: list[dict], new_packages: list[dict]) -> list[dict]
 
     for new_pkg in new_packages:
         new_norm = normalize_order_number(new_pkg.get("orderNumber", ""))
+        new_name = new_pkg.get("name", "").strip().lower()
 
+        # Find match: first by order number, then fall back to name
+        match_idx = None
         if new_norm and new_norm in order_index:
+            match_idx = order_index[new_norm]
+        elif new_name and new_name in name_index:
+            match_idx = name_index[new_name]
+
+        if match_idx is not None:
             # UPDATE existing package
-            idx = order_index[new_norm]
+            idx = match_idx
             existing_pkg = merged[idx]
             changed = False
 
@@ -113,8 +126,11 @@ def merge_packages(existing: list[dict], new_packages: list[dict]) -> list[dict]
             added += 1
 
             # Add to index for dedup within the new batch
+            new_idx = len(merged) - 1
             if new_norm:
-                order_index[new_norm] = len(merged) - 1
+                order_index[new_norm] = new_idx
+            if new_name:
+                name_index[new_name] = new_idx
 
     return merged, added, updated
 
