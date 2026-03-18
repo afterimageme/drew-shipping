@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drew's Shopping Intervention</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #09090b;
+            --surface: #18181b;
+            --surface-2: #27272a;
+            --border: #3f3f46;
+            --border-subtle: rgba(63,63,70,0.5);
+            --text: #fafafa;
+            --text-2: #a1a1aa;
+            --text-3: #71717a;
+            --blue: #3b82f6;
+            --blue-glow: rgba(59,130,246,0.15);
+            --green: #22c55e;
+            --green-glow: rgba(34,197,94,0.15);
+            --amber: #f59e0b;
+            --amber-glow: rgba(245,158,11,0.15);
+            --purple: #a855f7;
+            --purple-glow: rgba(168,85,247,0.15);
+            --red: #ef4444;
+            --red-glow: rgba(239,68,68,0.15);
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ---- Animated grain background ---- */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse 80% 60% at 50% -20%, rgba(59,130,246,0.08), transparent),
+                        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(168,85,247,0.06), transparent);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .page { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 0 20px 80px; }
+
+        /* ---- Back Link ---- */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 24px 0 0;
+            color: var(--text-3);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        .back-link:hover { color: var(--text-2); }
+        .back-link svg { width: 14px; height: 14px; }
+
+        /* ---- Hero ---- */
+        .hero {
+            padding: 32px 0 32px;
+            text-align: center;
+        }
+
+        .hero-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, var(--red), var(--amber));
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            box-shadow: 0 0 40px rgba(239,68,68,0.2), 0 0 80px rgba(245,158,11,0.1);
+        }
+
+        .hero h1 {
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+        }
+
+        .hero h1 .accent {
+            background: linear-gradient(135deg, var(--red), var(--amber));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero .subtitle {
+            color: var(--text-3);
+            font-size: 15px;
+            margin-top: 12px;
+            font-weight: 400;
+            max-width: 560px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        /* ---- Stats Bar ---- */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin: 24px 0 40px;
+        }
+
+        .stat {
+            background: var(--surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius);
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s, transform 0.2s;
+        }
+
+        .stat:hover { border-color: var(--border); transform: translateY(-2px); }
+
+        .stat .num {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1;
+        }
+
+        .stat .lbl {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-3);
+            margin-top: 6px;
+        }
+
+        .stat.orders .num { color: var(--blue); }
+        .stat.orders::before { content: ''; position: absolute; inset: 0; background: var(--blue-glow); opacity: 0; transition: opacity 0.3s; }
+        .stat.orders:hover::before { opacity: 1; }
+
+        .stat.lights .num { color: var(--amber); }
+        .stat.lights::before { content: ''; position: absolute; inset: 0; background: var(--amber-glow); opacity: 0; transition: opacity 0.3s; }
+        .stat.lights:hover::before { opacity: 1; }
+
+        .stat.beds .num { color: var(--purple); }
+        .stat.beds::before { content: ''; position: absolute; inset: 0; background: var(--purple-glow); opacity: 0; transition: opacity 0.3s; }
+        .stat.beds:hover::before { opacity: 1; }
+
+        .stat.spent .num { color: var(--red); }
+        .stat.spent::before { content: ''; position: absolute; inset: 0; background: var(--red-glow); opacity: 0; transition: opacity 0.3s; }
+        .stat.spent:hover::before { opacity: 1; }
+
+        /* ---- Section Headers ---- */
+        .section-header {
+            margin-bottom: 24px;
+        }
+
+        .section-header h2 {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .section-header .section-sub {
+            color: var(--text-3);
+            font-size: 14px;
+            margin-top: 6px;
+            line-height: 1.5;
+        }
+
+        /* ---- Recommendation Cards (Section 1) ---- */
+        .rec-card {
+            background: var(--surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius);
+            padding: 28px;
+            margin-bottom: 16px;
+            display: flex;
+            gap: 24px;
+            align-items: flex-start;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s, transform 0.2s;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .rec-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+            transition: border-color 0.3s, transform 0.4s ease-out, opacity 0.4s ease-out;
+        }
+
+        .rec-card:hover {
+            border-color: var(--border);
+            transform: translateY(-2px);
+        }
+
+        .rec-card.visible:hover {
+            transform: translateY(-2px);
+        }
+
+        .rec-emoji {
+            width: 64px;
+            height: 64px;
+            min-width: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            position: relative;
+        }
+
+        .rec-emoji.blue { background: linear-gradient(135deg, var(--blue-glow), rgba(168,85,247,0.1)); border: 1px solid rgba(59,130,246,0.2); }
+        .rec-emoji.amber { background: linear-gradient(135deg, var(--amber-glow), rgba(245,158,11,0.08)); border: 1px solid rgba(245,158,11,0.2); }
+        .rec-emoji.purple { background: linear-gradient(135deg, var(--purple-glow), rgba(59,130,246,0.08)); border: 1px solid rgba(168,85,247,0.2); }
+        .rec-emoji.green { background: linear-gradient(135deg, var(--green-glow), rgba(34,197,94,0.08)); border: 1px solid rgba(34,197,94,0.2); }
+        .rec-emoji.red { background: linear-gradient(135deg, var(--red-glow), rgba(239,68,68,0.08)); border: 1px solid rgba(239,68,68,0.2); }
+
+        .rec-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .rec-trigger {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-3);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 8px;
+        }
+
+        .rec-title {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .rec-price {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 12px;
+            background: var(--surface-2);
+            border: 1px solid var(--border-subtle);
+            color: var(--green);
+        }
+
+        .rec-roast {
+            color: var(--text-2);
+            font-size: 14px;
+            line-height: 1.65;
+            margin-bottom: 16px;
+        }
+
+        .btn-buy {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 24px;
+            border: none;
+            border-radius: 100px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.3s, opacity 0.2s;
+        }
+
+        .btn-buy:hover { transform: translateY(-1px); }
+        .btn-buy:active { transform: translateY(0); }
+
+        .btn-buy.primary {
+            background: linear-gradient(135deg, var(--blue), var(--purple));
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(59,130,246,0.3);
+        }
+        .btn-buy.primary:hover {
+            box-shadow: 0 6px 30px rgba(59,130,246,0.4);
+        }
+
+        .btn-buy.danger {
+            background: linear-gradient(135deg, var(--red), var(--amber));
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(239,68,68,0.3);
+        }
+        .btn-buy.danger:hover {
+            box-shadow: 0 6px 30px rgba(239,68,68,0.4);
+        }
+
+        /* ---- Section 2 Grid ---- */
+        .absurd-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+
+        .absurd-card {
+            background: var(--surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s, transform 0.2s;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .absurd-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+            transition: border-color 0.3s, transform 0.4s ease-out, opacity 0.4s ease-out;
+        }
+
+        .absurd-card:hover {
+            border-color: var(--border);
+            transform: translateY(-2px);
+        }
+
+        .absurd-card.visible:hover {
+            transform: translateY(-2px);
+        }
+
+        .category-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            width: fit-content;
+            margin-bottom: 16px;
+        }
+
+        .category-pill.motorcycle { background: rgba(239,68,68,0.12); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
+        .category-pill.japan { background: rgba(168,85,247,0.12); color: var(--purple); border: 1px solid rgba(168,85,247,0.2); }
+        .category-pill.kitchen { background: rgba(245,158,11,0.12); color: var(--amber); border: 1px solid rgba(245,158,11,0.2); }
+        .category-pill.tattoos { background: rgba(59,130,246,0.12); color: var(--blue); border: 1px solid rgba(59,130,246,0.2); }
+        .category-pill.home { background: rgba(34,197,94,0.12); color: var(--green); border: 1px solid rgba(34,197,94,0.2); }
+
+        .absurd-emoji {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+
+        .absurd-name {
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+
+        .absurd-price {
+            font-size: 28px;
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: -0.02em;
+            margin-bottom: 10px;
+        }
+
+        .absurd-price.motorcycle { color: var(--red); }
+        .absurd-price.japan { color: var(--purple); }
+        .absurd-price.kitchen { color: var(--amber); }
+        .absurd-price.tattoos { color: var(--blue); }
+        .absurd-price.home { color: var(--green); }
+
+        .absurd-pitch {
+            color: var(--text-2);
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            flex: 1;
+        }
+
+        /* ---- Footer ---- */
+        .footer {
+            text-align: center;
+            padding: 40px 0 20px;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .footer .total {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+        }
+
+        .footer .total span {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--red);
+        }
+
+        .footer .disclaimer {
+            color: var(--text-3);
+            font-size: 13px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .footer .back-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 24px;
+            border: 1px solid var(--border-subtle);
+            border-radius: 100px;
+            background: var(--surface);
+            color: var(--text-2);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: border-color 0.3s, background 0.3s, color 0.3s, transform 0.2s;
+        }
+
+        .footer .back-home:hover {
+            border-color: var(--border);
+            background: var(--surface-2);
+            color: var(--text);
+            transform: translateY(-1px);
+        }
+
+        /* ---- Confetti Canvas ---- */
+        #confetti-canvas {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* ---- Section Divider ---- */
+        .section-divider {
+            margin: 48px 0;
+            border: none;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        /* ---- Responsive ---- */
+        @media (max-width: 700px) {
+            .stats { grid-template-columns: repeat(2, 1fr); }
+            .hero h1 { font-size: 28px; }
+            .rec-card { flex-direction: column; gap: 16px; padding: 20px; }
+            .rec-emoji { width: 52px; height: 52px; min-width: 52px; font-size: 24px; }
+            .rec-title { font-size: 18px; }
+            .absurd-grid { grid-template-columns: 1fr; }
+            .stat .num { font-size: 24px; }
+            .absurd-price { font-size: 24px; }
+        }
+
+        @media (max-width: 420px) {
+            .stats { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .stat { padding: 14px; }
+            .stat .num { font-size: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="confetti-canvas"></canvas>
+    <div class="page">
+
+        <!-- Back Link -->
+        <a href="index.html" class="back-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+            Back to Tracking
+        </a>
+
+        <!-- Hero -->
+        <div class="hero">
+            <div class="hero-icon">🚨</div>
+            <h1>Drew's Shopping <span class="accent">Intervention</span></h1>
+            <p class="subtitle">Based on your recent purchases, our algorithms have determined you need professional help. In the meantime, here are some recommendations.</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat orders">
+                <div class="num" style="position:relative;z-index:1">14</div>
+                <div class="lbl" style="position:relative;z-index:1">Orders Analyzed</div>
+            </div>
+            <div class="stat lights">
+                <div class="num" style="position:relative;z-index:1">4</div>
+                <div class="lbl" style="position:relative;z-index:1">Light Fixtures</div>
+            </div>
+            <div class="stat beds">
+                <div class="num" style="position:relative;z-index:1">2</div>
+                <div class="lbl" style="position:relative;z-index:1">King Beds</div>
+            </div>
+            <div class="stat spent">
+                <div class="num" style="position:relative;z-index:1">$8,400</div>
+                <div class="lbl" style="position:relative;z-index:1">Spent (Est.)</div>
+            </div>
+        </div>
+
+        <!-- Section 1: Because You Bought... -->
+        <div class="section-header">
+            <h2>Because You Bought...</h2>
+            <p class="section-sub">Algorithmically generated product recommendations based on deeply questionable purchase patterns.</p>
+        </div>
+
+        <!-- Card 1: Light Fixtures -->
+        <div class="rec-card" data-animate>
+            <div class="rec-emoji amber">🕶️</div>
+            <div class="rec-body">
+                <div class="rec-trigger">Because you bought: 4 different light fixtures</div>
+                <div class="rec-title">ANRRI Blue Light Blocking Glasses</div>
+                <span class="rec-price">$15.99</span>
+                <p class="rec-roast">Four light fixtures from four different stores. Your home now has more lumens per square foot than a surgical operating room. Protect what's left of your retinas.</p>
+                <a href="https://www.amazon.com/dp/B07GRPXNX4" target="_blank" rel="noopener" class="btn-buy primary">Buy This Immediately</a>
+            </div>
+        </div>
+
+        <!-- Card 2: Two King Beds -->
+        <div class="rec-card" data-animate>
+            <div class="rec-emoji purple">🛏️</div>
+            <div class="rec-body">
+                <div class="rec-trigger">Because you bought: 2 king beds</div>
+                <div class="rec-title">'Adulting Is Hard' Throw Pillow</div>
+                <span class="rec-price">~$20</span>
+                <p class="rec-roast">Two king beds. For one person. One will inevitably become a $2,400 shelf for laundry you swear you'll fold tomorrow. At least give it a pillow that understands the struggle.</p>
+                <a href="https://www.amazon.com/dp/B0DB22P5GG" target="_blank" rel="noopener" class="btn-buy primary">Buy This Immediately</a>
+            </div>
+        </div>
+
+        <!-- Card 3: Fitness Machines -->
+        <div class="rec-card" data-animate>
+            <div class="rec-emoji green">🧥</div>
+            <div class="rec-body">
+                <div class="rec-trigger">Because you bought: Tonal + NordicTrack</div>
+                <div class="rec-title">Proman Windsor Executive Valet Stand</div>
+                <span class="rec-price">$95</span>
+                <p class="rec-roast">Two premium fitness machines. Bold. The Tonal will hold jackets by April and the NordicTrack will display your towel collection by May. Skip the middleman. This mahogany valet stand was built for the job.</p>
+                <a href="https://www.amazon.com/dp/B017RRR63W" target="_blank" rel="noopener" class="btn-buy primary">Buy This Immediately</a>
+            </div>
+        </div>
+
+        <!-- Card 4: Orange Everything -->
+        <div class="rec-card" data-animate>
+            <div class="rec-emoji amber">🍊</div>
+            <div class="rec-body">
+                <div class="rec-trigger">Because you bought: Orange iMac + Tangerine helmet + Copper fixtures</div>
+                <div class="rec-title">Le Creuset Dutch Oven in Flame</div>
+                <span class="rec-price">$434.95</span>
+                <p class="rec-roast">Orange iMac. Tangerine helmet. Copper sconces. Copper velvet bed. You're not decorating, you're building a shrine to the color orange. Complete the collection. Le Creuset Flame was literally invented for this moment.</p>
+                <a href="https://www.amazon.com/dp/B0076NOHG2" target="_blank" rel="noopener" class="btn-buy primary">Buy This Immediately</a>
+            </div>
+        </div>
+
+        <!-- Card 5: Ruggable Rugs -->
+        <div class="rec-card" data-animate>
+            <div class="rec-emoji green">🐕</div>
+            <div class="rec-body">
+                <div class="rec-trigger">Because you bought: 2 Ruggable rugs (8x10 AND 9x12)</div>
+                <div class="rec-title">'We Hope You Brought Wine and Dog Treats' Doormat</div>
+                <span class="rec-price">$28</span>
+                <p class="rec-roast">Two machine-washable rugs with no dog is just paranoid infrastructure planning. Get the dog. Complete the prophecy. The rugs are ready. You are ready.</p>
+                <a href="https://www.amazon.com/dp/B07G84CKBM" target="_blank" rel="noopener" class="btn-buy primary">Buy This Immediately</a>
+            </div>
+        </div>
+
+        <!-- Card 6: Fireplace Tools -->
+        <div class="rec-card" data-animate>
+            <div class="rec-emoji red">🔥</div>
+            <div class="rec-body">
+                <div class="rec-trigger">Because you bought: DWR Emma Fireplace Tools ($400+)</div>
+                <div class="rec-title">LifePlus Electric Tabletop Fireplace</div>
+                <span class="rec-price">$70</span>
+                <p class="rec-roast">You spent $400+ on designer fireplace tools from Design Within Reach. Do you... do you have a fireplace? Either way, here's a $70 electric one so those artisan tongs finally have a purpose.</p>
+                <a href="https://www.amazon.com/dp/B08BJ4NWDG" target="_blank" rel="noopener" class="btn-buy primary">Buy This Immediately</a>
+            </div>
+        </div>
+
+        <!-- Card 7: Artisan Tile -->
+        <div class="rec-card" data-animate>
+            <div class="rec-emoji blue">📺</div>
+            <div class="rec-body">
+                <div class="rec-trigger">Because you bought: Zia Tile artisan tile</div>
+                <div class="rec-title">YouTube Premium</div>
+                <span class="rec-price">$13.99/mo</span>
+                <p class="rec-roast">Artisan tile is beautiful. Installing artisan tile is a war crime against your knees and your marriage. You're going to watch "how to tile a bathroom floor" at 11pm and cry. At least do it without ads.</p>
+                <a href="https://www.youtube.com/premium" target="_blank" rel="noopener" class="btn-buy primary">Buy This Immediately</a>
+            </div>
+        </div>
+
+        <!-- Card 8: Tangerine Helmet -->
+        <div class="rec-card" data-animate>
+            <div class="rec-emoji red">🏍️</div>
+            <div class="rec-body">
+                <div class="rec-trigger">Because you bought: Bell Bullitt GT Tangerine helmet</div>
+                <div class="rec-title">Schott NYC Classic Perfecto Leather Jacket</div>
+                <span class="rec-price">$900</span>
+                <p class="rec-roast">A $350 tangerine helmet with a gold iridium shield. You're one leather jacket away from a full Wes Anderson motorcycle chase scene. The Schott Perfecto is the only acceptable next step.</p>
+                <a href="https://www.schottnyc.com/products/classic-perfecto-steerhide-leather-motorcycle.htm" target="_blank" rel="noopener" class="btn-buy primary">Buy This Immediately</a>
+            </div>
+        </div>
+
+        <!-- Card 9: Nelson Lamp -->
+        <div class="rec-card" data-animate>
+            <div class="rec-emoji purple">🐷</div>
+            <div class="rec-body">
+                <div class="rec-trigger">Because you bought: Herman Miller Nelson Cigar Lotus Floor Lamp ($800+)</div>
+                <div class="rec-title">BigMouth Inc. Fanny Bank</div>
+                <span class="rec-price">$19.99</span>
+                <p class="rec-roast">Eight hundred dollars. For a lamp. Named after a cigar. Every coin you drop in this piggy bank from now on is a small act of financial therapy. It makes sounds. You'll need the comic relief.</p>
+                <a href="https://www.amazon.com/dp/B001E21V9M" target="_blank" rel="noopener" class="btn-buy primary">Buy This Immediately</a>
+            </div>
+        </div>
+
+        <!-- Card 10: White Glove -->
+        <div class="rec-card" data-animate>
+            <div class="rec-emoji blue">🧤</div>
+            <div class="rec-body">
+                <div class="rec-trigger">Because you bought: Article Nera Bed with White Glove Delivery</div>
+                <div class="rec-title">Formal White Cotton Gloves</div>
+                <span class="rec-price">$12</span>
+                <p class="rec-roast">You paid extra for "White Glove" delivery, which just means two guys in regular gloves carefully avoid eye contact while assembling your furniture. Now YOU can be the white glove inspector. Run a finger along surfaces. Tut disapprovingly. Live your truth.</p>
+                <a href="https://www.amazon.com/dp/B0BMKYRC8Q" target="_blank" rel="noopener" class="btn-buy primary">Buy This Immediately</a>
+            </div>
+        </div>
+
+        <!-- Section Divider -->
+        <hr class="section-divider">
+
+        <!-- Section 2: Things Drew Absolutely Does Not Need -->
+        <div class="section-header">
+            <h2>Things Drew Absolutely Does Not Need</h2>
+            <p class="section-sub">But based on the trajectory of spending, it's only a matter of time.</p>
+        </div>
+
+        <div class="absurd-grid">
+
+            <!-- Motorcycle -->
+            <div class="absurd-card" data-animate>
+                <span class="category-pill motorcycle">Motorcycle</span>
+                <div class="absurd-emoji">🏍️</div>
+                <div class="absurd-name">Ducati Panigale V4 SP2</div>
+                <div class="absurd-price motorcycle">$39,500</div>
+                <p class="absurd-pitch">You bought a tangerine helmet. That helmet needs a bike that costs more than most cars. It's only logical.</p>
+                <a href="https://www.ducati.com/us/en/bikes/panigale/panigale-v4-sp2" target="_blank" rel="noopener" class="btn-buy danger">You Know You Want It</a>
+            </div>
+
+            <div class="absurd-card" data-animate>
+                <span class="category-pill motorcycle">Motorcycle</span>
+                <div class="absurd-emoji">🗺️</div>
+                <div class="absurd-name">Garmin Zumo XT2 Motorcycle GPS</div>
+                <div class="absurd-price motorcycle">$499.99</div>
+                <p class="absurd-pitch">So you never get lost on the way to buy more copper fixtures.</p>
+                <a href="https://www.amazon.com/dp/B0D2GWTBB5" target="_blank" rel="noopener" class="btn-buy danger">You Know You Want It</a>
+            </div>
+
+            <!-- Japan -->
+            <div class="absurd-card" data-animate>
+                <span class="category-pill japan">Japan</span>
+                <div class="absurd-emoji">🛁</div>
+                <div class="absurd-name">Bartok Design Hinoki Wood Ofuro Soaking Tub</div>
+                <div class="absurd-price japan">$5,900+</div>
+                <p class="absurd-pitch">A hand-crafted Japanese cedar soaking tub. Because your bathroom renovation needs to cost more than your first car.</p>
+                <a href="https://www.bartokdesign.com/" target="_blank" rel="noopener" class="btn-buy danger">You Know You Want It</a>
+            </div>
+
+            <div class="absurd-card" data-animate>
+                <span class="category-pill japan">Japan</span>
+                <div class="absurd-emoji">🥃</div>
+                <div class="absurd-name">Suntory Yamazaki 18 Year Single Malt</div>
+                <div class="absurd-price japan">$450+</div>
+                <p class="absurd-pitch">For sipping contemplatively while staring at your four light fixtures and wondering where the money went.</p>
+                <a href="https://www.thewhiskyexchange.com/p/2103/yamazaki-18-year-old" target="_blank" rel="noopener" class="btn-buy danger">You Know You Want It</a>
+            </div>
+
+            <div class="absurd-card" data-animate>
+                <span class="category-pill japan">Japan</span>
+                <div class="absurd-emoji">🚽</div>
+                <div class="absurd-name">Toto Washlet S7A Bidet Seat</div>
+                <div class="absurd-price japan">$1,348</div>
+                <p class="absurd-pitch">Heated seat, UV cleaning, automatic lid, remote control. It does everything except judge your purchases. Actually it might.</p>
+                <a href="https://www.totousa.com/washlet-s7a" target="_blank" rel="noopener" class="btn-buy danger">You Know You Want It</a>
+            </div>
+
+            <!-- Kitchen -->
+            <div class="absurd-card" data-animate>
+                <span class="category-pill kitchen">Kitchen</span>
+                <div class="absurd-emoji">☕</div>
+                <div class="absurd-name">La Marzocco Linea Mini Espresso Machine</div>
+                <div class="absurd-price kitchen">$5,400</div>
+                <p class="absurd-pitch">A cafe-grade espresso machine for someone who has demonstrated zero ability to say "no, that's too expensive."</p>
+                <a href="https://home.lamarzocco.com/en/linea-mini/" target="_blank" rel="noopener" class="btn-buy danger">You Know You Want It</a>
+            </div>
+
+            <div class="absurd-card" data-animate>
+                <span class="category-pill kitchen">Kitchen</span>
+                <div class="absurd-emoji">🔪</div>
+                <div class="absurd-name">Bob Kramer by Zwilling 8" Chef's Knife</div>
+                <div class="absurd-price kitchen">$425</div>
+                <p class="absurd-pitch">Hand-forged by a bladesmith. For cutting vegetables. That you'll buy with good intentions and throw away in two weeks.</p>
+                <a href="https://www.zwilling.com/us/bob-kramer-by-zwilling/" target="_blank" rel="noopener" class="btn-buy danger">You Know You Want It</a>
+            </div>
+
+            <div class="absurd-card" data-animate>
+                <span class="category-pill kitchen">Kitchen</span>
+                <div class="absurd-emoji">🍞</div>
+                <div class="absurd-name">Balmuda The Toaster</div>
+                <div class="absurd-price kitchen">$299</div>
+                <p class="absurd-pitch">A $299 toaster. It uses steam technology. For toast. You are the target demographic for a $299 toaster and you know it.</p>
+                <a href="https://us.balmuda.com/products/balmuda-the-toaster" target="_blank" rel="noopener" class="btn-buy danger">You Know You Want It</a>
+            </div>
+
+            <!-- Tattoos -->
+            <div class="absurd-card" data-animate>
+                <span class="category-pill tattoos">Tattoos</span>
+                <div class="absurd-emoji">💉</div>
+                <div class="absurd-name">FK Irons Spektra Flux S PMU Machine</div>
+                <div class="absurd-price tattoos">$740</div>
+                <p class="absurd-pitch">Skip the middleman. At the rate you're spending, you could tattoo your own receipts directly onto your body.</p>
+                <a href="https://fkirons.com/" target="_blank" rel="noopener" class="btn-buy danger">You Know You Want It</a>
+            </div>
+
+            <div class="absurd-card" data-animate>
+                <span class="category-pill tattoos">Tattoos</span>
+                <div class="absurd-emoji">🧴</div>
+                <div class="absurd-name">Mad Rabbit Luxe Tattoo Aftercare Set</div>
+                <div class="absurd-price tattoos">$80</div>
+                <p class="absurd-pitch">Premium aftercare for premium skin. You buy designer fireplace tools. You think you're using regular lotion? Please.</p>
+                <a href="https://www.madrabbit.com/" target="_blank" rel="noopener" class="btn-buy danger">You Know You Want It</a>
+            </div>
+
+            <!-- Home -->
+            <div class="absurd-card" data-animate>
+                <span class="category-pill home">Home</span>
+                <div class="absurd-emoji">🪑</div>
+                <div class="absurd-name">Herman Miller Eames Lounge Chair &amp; Ottoman</div>
+                <div class="absurd-price home">$7,395</div>
+                <p class="absurd-pitch">You already have the Nelson lamp. The Eames chair is the inevitable next step. Resistance is futile. Herman Miller has your credit card number memorized.</p>
+                <a href="https://store.hermanmiller.com/living-room-furniture-lounge-chairs-ottomans/eames-lounge-chair-and-ottoman/5667.html" target="_blank" rel="noopener" class="btn-buy danger">You Know You Want It</a>
+            </div>
+
+            <div class="absurd-card" data-animate>
+                <span class="category-pill home">Home</span>
+                <div class="absurd-emoji">🌬️</div>
+                <div class="absurd-name">Dyson Purifier Hot+Cool Formaldehyde</div>
+                <div class="absurd-price home">$769.99</div>
+                <p class="absurd-pitch">For purifying the air in a home that's 40% packaging materials from all these deliveries.</p>
+                <a href="https://www.dyson.com/air-treatment/purifiers/big-quiet-formaldehyde/big-quiet-formaldehyde-nickel" target="_blank" rel="noopener" class="btn-buy danger">You Know You Want It</a>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p class="total">Total recommended spending: <span>$64,417</span></p>
+            <p class="disclaimer">Drew's Shopping Intervention is a public service brought to you by concerned friends.</p>
+            <a href="index.html" class="back-home">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+                Back to Tracking
+            </a>
+        </div>
+
+    </div>
+
+    <script>
+        // ---- Scroll Animations (IntersectionObserver) ----
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    // Stagger animations slightly
+                    const delay = entry.target.dataset.delay || 0;
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, delay);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -40px 0px'
+        });
+
+        document.querySelectorAll('[data-animate]').forEach((el, i) => {
+            el.dataset.delay = (i % 4) * 80; // Stagger within viewport groups
+            observer.observe(el);
+        });
+
+        // ---- Confetti Animation ----
+        (function() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            let W, H;
+
+            function resize() {
+                W = canvas.width = window.innerWidth;
+                H = canvas.height = window.innerHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            const colors = ['#3b82f6', '#a855f7', '#ef4444', '#f59e0b', '#22c55e', '#fafafa'];
+            const particles = [];
+            const PARTICLE_COUNT = 80;
+
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                particles.push({
+                    x: Math.random() * W,
+                    y: Math.random() * H * -1 - 20,
+                    w: Math.random() * 8 + 4,
+                    h: Math.random() * 4 + 2,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    vx: (Math.random() - 0.5) * 3,
+                    vy: Math.random() * 3 + 2,
+                    rotation: Math.random() * 360,
+                    rotationSpeed: (Math.random() - 0.5) * 10,
+                    opacity: 1,
+                    decay: 0.003 + Math.random() * 0.005
+                });
+            }
+
+            let running = true;
+            let frame = 0;
+
+            function animate() {
+                if (!running) {
+                    ctx.clearRect(0, 0, W, H);
+                    canvas.style.display = 'none';
+                    return;
+                }
+
+                ctx.clearRect(0, 0, W, H);
+                let allDone = true;
+
+                particles.forEach(p => {
+                    if (p.opacity <= 0) return;
+                    allDone = false;
+
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.05; // gravity
+                    p.rotation += p.rotationSpeed;
+                    p.opacity -= p.decay;
+                    if (p.opacity < 0) p.opacity = 0;
+
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rotation * Math.PI / 180);
+                    ctx.globalAlpha = p.opacity;
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                    ctx.restore();
+                });
+
+                frame++;
+                if (allDone || frame > 300) {
+                    running = false;
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            // Start confetti after a brief delay
+            setTimeout(() => {
+                animate();
+            }, 300);
+        })();
+    </script>
+</body>
+</html>

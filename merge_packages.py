@@ -27,9 +27,10 @@ def merge_packages(existing: list[dict], new_packages: list[dict]) -> list[dict]
     - For matches: update tracking, trackingUrl, status, estimatedDelivery
     - For new (no match): add with status "pending" (unless already set)
     """
-    # Build lookup of existing packages by normalized order number
+    # Build lookup of existing packages by normalized order number, name, and tracking
     order_index: dict[str, int] = {}
     name_index: dict[str, int] = {}
+    tracking_index: dict[str, int] = {}
     for i, pkg in enumerate(existing):
         norm = normalize_order_number(pkg.get("orderNumber", ""))
         if norm:
@@ -38,6 +39,10 @@ def merge_packages(existing: list[dict], new_packages: list[dict]) -> list[dict]
         pkg_name = pkg.get("name", "").strip().lower()
         if pkg_name:
             name_index[pkg_name] = i
+        # Also index by tracking number to prevent duplicates
+        pkg_tracking = pkg.get("tracking", "").strip()
+        if pkg_tracking:
+            tracking_index[pkg_tracking] = i
 
     merged = list(existing)  # shallow copy
     added = 0
@@ -47,10 +52,13 @@ def merge_packages(existing: list[dict], new_packages: list[dict]) -> list[dict]
         new_norm = normalize_order_number(new_pkg.get("orderNumber", ""))
         new_name = new_pkg.get("name", "").strip().lower()
 
-        # Find match: first by order number, then fall back to name
+        # Find match: by order number, tracking number, or name
+        new_tracking = new_pkg.get("tracking", "").strip()
         match_idx = None
         if new_norm and new_norm in order_index:
             match_idx = order_index[new_norm]
+        elif new_tracking and new_tracking in tracking_index:
+            match_idx = tracking_index[new_tracking]
         elif new_name and new_name in name_index:
             match_idx = name_index[new_name]
 
@@ -131,6 +139,8 @@ def merge_packages(existing: list[dict], new_packages: list[dict]) -> list[dict]
                 order_index[new_norm] = new_idx
             if new_name:
                 name_index[new_name] = new_idx
+            if new_tracking:
+                tracking_index[new_tracking] = new_idx
 
     return merged, added, updated
 
