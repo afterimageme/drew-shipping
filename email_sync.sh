@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # email_sync.sh — Gmail-to-website sync pipeline for Drew's Move dashboard.
-# Designed to run every 30 minutes via cron.
+# Designed to run hourly 8am-7pm via cron.
 #
 # Crontab entry:
-#   */30 * * * * /home/openclaw/drew-shipping/email_sync.sh
+#   0 8-19 * * * cronwrap --name drew-shipping-sync ... -- /home/openclaw/drew-shipping/email_sync.sh
 #
 set -euo pipefail
 
@@ -34,7 +34,7 @@ CLAUDE_STDERR="$TEMP_DIR/claude_stderr.log"
 
 PROMPT=$(cat "$PROMPT_FILE")
 
-if claude -p "$PROMPT" \
+if /home/openclaw/.local/bin/claude -p "$PROMPT" \
     --allowedTools "mcp__claude_ai_Gmail__gmail_search_messages,mcp__claude_ai_Gmail__gmail_read_message,mcp__claude_ai_Gmail__gmail_read_thread" \
     --output-format text \
     > "$NEW_PACKAGES_FILE" \
