@@ -199,25 +199,37 @@
         "orderNumber": "1097718"
     },
     {
-        "name": "Stone Leaf Pottery - Order",
+        "name": "Stone Leaf Pottery - Kiln",
         "carrier": "Other",
         "tracking": "",
         "trackingUrl": "",
         "status": "pending",
         "estimatedDelivery": "",
         "from": "Stone Leaf Pottery",
-        "items": [],
+        "items": [
+            "Kiln (on order, ETA TBD)"
+        ],
         "orderNumber": "58027"
     },
     {
-        "name": "West Elm - Order",
+        "name": "West Elm - Bathroom Accessories",
         "carrier": "Other",
         "tracking": "",
         "trackingUrl": "",
         "status": "pending",
-        "estimatedDelivery": "",
+        "estimatedDelivery": "2026-05-05",
         "from": "West Elm",
-        "items": [],
+        "items": [
+            "Blomus SONO Toilet Brush, Moonbeam Cream",
+            "Blomus SONO Toilet Brush, Microchip Gray",
+            "UME Pedal Bin, Terracotta",
+            "UME Toilet Brush, Terracotta",
+            "Blomus SONO Pedal Bin, Microchip Gray",
+            "Sono Plunger with Holder, Microchip Gray",
+            "Sono Plunger with Holder, Moonbeam Cream",
+            "Blomus SONO Pedal Bin, Moonbeam Cream",
+            "Esana Bathmat 20x34, Neutral"
+        ],
         "orderNumber": "360793045327"
     }
 ]
