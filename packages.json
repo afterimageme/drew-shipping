@@ -69,10 +69,10 @@
     },
     {
         "name": "Ruggable - Inkdrop Lapis Blue Rug 9'x12'",
-        "carrier": "Other",
-        "tracking": "",
-        "trackingUrl": "",
-        "status": "pending",
+        "carrier": "FedEx",
+        "tracking": "399734102382",
+        "trackingUrl": "https://www.fedex.com/fedextrack/?trknbr=399734102382",
+        "status": "in-transit",
         "estimatedDelivery": "",
         "from": "Ruggable",
         "items": [
@@ -82,10 +82,10 @@
     },
     {
         "name": "Ozarke - Trinity Flush Mount Light",
-        "carrier": "Other",
-        "tracking": "",
-        "trackingUrl": "",
-        "status": "pending",
+        "carrier": "UPS",
+        "tracking": "1Z1105W10397558590",
+        "trackingUrl": "https://www.ups.com/track?tracknum=1Z1105W10397558590",
+        "status": "in-transit",
         "estimatedDelivery": "2026-03-20",
         "from": "Ozarke",
         "items": [
