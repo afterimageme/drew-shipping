@@ -734,6 +734,103 @@
             margin-bottom: 24px;
         }
 
+        /* ---- Package action menu ---- */
+        .pkg-actions {
+            display: flex;
+            gap: 4px;
+            margin-top: 8px;
+        }
+
+        .pkg-action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            background: transparent;
+            color: var(--text-3);
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.2s, border-color 0.2s, background 0.2s;
+            white-space: nowrap;
+        }
+
+        .pkg-action-btn:hover {
+            color: var(--text);
+            border-color: var(--border);
+            background: var(--surface-2);
+        }
+
+        .pkg-action-btn.deliver:hover {
+            color: var(--green);
+            border-color: var(--green);
+            background: var(--green-glow);
+        }
+
+        .pkg-action-btn.transit:hover {
+            color: var(--blue);
+            border-color: var(--blue);
+            background: var(--blue-glow);
+        }
+
+        .pkg-action-btn.pend:hover {
+            color: var(--amber);
+            border-color: var(--amber);
+            background: var(--amber-glow);
+        }
+
+        .pkg-action-btn.delete:hover {
+            color: #ef4444;
+            border-color: #ef4444;
+            background: rgba(239,68,68,0.1);
+        }
+
+        .pkg-action-btn svg {
+            width: 11px;
+            height: 11px;
+        }
+
+        .manual-badge {
+            display: inline-flex;
+            align-items: center;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--purple);
+            background: var(--purple-glow);
+            padding: 1px 6px;
+            border-radius: 4px;
+            margin-left: 6px;
+            letter-spacing: 0.03em;
+        }
+
+        /* ---- Toast notification ---- */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 12px 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            pointer-events: none;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
         .form-group {
             margin-bottom: 16px;
         }
@@ -1011,7 +1108,7 @@
             </svg>
         </button>
         <div class="modal-title">Add a Package</div>
-        <div class="modal-subtitle">Enter tracking details and we'll email it for processing.</div>
+        <div class="modal-subtitle" id="modalSubtitle">Enter package details to add it to the tracker.</div>
         <form id="addPkgForm" onsubmit="return submitAddPkg(event)">
             <div class="form-group">
                 <label for="pkgName">What did you order? *</label>
@@ -1047,13 +1144,23 @@
                 <label for="pkgStore">Where did you order from?</label>
                 <input type="text" id="pkgStore" placeholder="e.g. Amazon, Wayfair, IKEA">
             </div>
-            <button type="submit" class="submit-btn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                Send Tracking Email
+            <div class="form-group">
+                <label for="pkgStatus">Status</label>
+                <select id="pkgStatus">
+                    <option value="pending">Pending</option>
+                    <option value="in-transit">In Transit</option>
+                    <option value="delivered">Delivered</option>
+                </select>
+            </div>
+            <button type="submit" class="submit-btn" id="submitBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <span id="submitBtnText">Add Package</span>
             </button>
         </form>
     </div>
 </div>
+
+<div class="toast" id="toast"></div>
 
 <script>
 const PACKAGES = [
@@ -1370,235 +1477,185 @@ function handleSync() {
     }, 2000);
 }
 
-// Render stats
-function renderStats() {
-    const t = PACKAGES.length;
-    const tr = PACKAGES.filter(p => p.status === 'in-transit').length;
-    const d = PACKAGES.filter(p => p.status === 'delivered').length;
-    const pe = PACKAGES.filter(p => p.status === 'pending').length;
+// ---- localStorage Management ----
+const LS_KEY_MANUAL = 'drew_manual_packages';
+const LS_KEY_OVERRIDES = 'drew_status_overrides';
+const LS_KEY_DELETED = 'drew_deleted_packages';
 
-    document.getElementById('stats').innerHTML = `
-        <div class="stat total animate-in" style="animation-delay:0.05s"><div class="num">${t}</div><div class="lbl">Total</div></div>
-        <div class="stat transit animate-in" style="animation-delay:0.1s"><div class="num">${tr}</div><div class="lbl">In Transit</div></div>
-        <div class="stat delivered animate-in" style="animation-delay:0.15s"><div class="num">${d}</div><div class="lbl">Delivered</div></div>
-        <div class="stat pending animate-in" style="animation-delay:0.2s"><div class="num">${pe}</div><div class="lbl">Pending</div></div>
-    `;
+function getManualPackages() {
+    try { return JSON.parse(localStorage.getItem(LS_KEY_MANUAL) || '[]'); } catch { return []; }
 }
 
-// Render calendar
-function renderCalendar() {
-    const el = document.getElementById('calendar');
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+function saveManualPackages(pkgs) {
+    localStorage.setItem(LS_KEY_MANUAL, JSON.stringify(pkgs));
+}
 
-    // Build delivery map: dateKey -> array of packages
-    const deliveryMap = {};
+function getOverrides() {
+    try { return JSON.parse(localStorage.getItem(LS_KEY_OVERRIDES) || '{}'); } catch { return {}; }
+}
+
+function saveOverrides(o) {
+    localStorage.setItem(LS_KEY_OVERRIDES, JSON.stringify(o));
+}
+
+function getDeleted() {
+    try { return JSON.parse(localStorage.getItem(LS_KEY_DELETED) || '[]'); } catch { return []; }
+}
+
+function saveDeleted(d) {
+    localStorage.setItem(LS_KEY_DELETED, JSON.stringify(d));
+}
+
+// Unique key for a package (order number preferred, fallback to name)
+function pkgKey(p) {
+    return p.orderNumber || p.name;
+}
+
+// Merge embedded + manual packages, apply overrides, remove deleted
+function getAllPackages() {
+    const deleted = new Set(getDeleted());
+    const overrides = getOverrides();
+    const manual = getManualPackages();
+
+    const merged = [];
+
+    // Add synced packages (with overrides applied)
     PACKAGES.forEach(p => {
-        const key = p.estimatedDelivery;
-        if (!deliveryMap[key]) deliveryMap[key] = [];
-        deliveryMap[key].push(p);
-    });
-
-    // Generate 14 days starting from today
-    const days = [];
-    for (let i = 0; i < 14; i++) {
-        const d = new Date(today);
-        d.setDate(d.getDate() + i);
-        days.push(d);
-    }
-
-    const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-    const rangeStart = days[0].toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    const rangeEnd = days[days.length - 1].toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-
-    let html = `
-        <div class="calendar-section animate-in" style="animation-delay:0.22s">
-            <div class="calendar-header">
-                <h2>Delivery Calendar</h2>
-                <span class="cal-range">${rangeStart} - ${rangeEnd}</span>
-            </div>
-            <div class="calendar-strip">
-    `;
-
-    days.forEach(d => {
-        const key = toDateKey(d);
-        const isToday = key === toDateKey(today);
-        const isPast = d < today;
-        const pkgs = deliveryMap[key] || [];
-        const hasDeliveries = pkgs.length > 0;
-        const isActive = calendarFilterDate === key;
-
-        let classes = 'cal-day';
-        if (isToday) classes += ' today';
-        if (isPast && !isToday) classes += ' past';
-        if (!hasDeliveries && !isToday) classes += ' no-deliveries';
-        if (isActive) classes += ' active';
-
-        let dotsHtml = '';
-        if (hasDeliveries) {
-            if (pkgs.length <= 3) {
-                dotsHtml = pkgs.map(p => `<span class="cal-dot ${p.status}"></span>`).join('');
-            } else {
-                dotsHtml = `<span class="cal-count">${pkgs.length}</span>`;
-            }
+        const key = pkgKey(p);
+        if (deleted.has(key)) return;
+        const override = overrides[key];
+        const pkg = { ...p };
+        if (override) {
+            if (override.status) pkg.status = override.status;
+            if (override.tracking) pkg.tracking = override.tracking;
+            if (override.trackingUrl) pkg.trackingUrl = override.trackingUrl;
+            if (override.carrier && override.carrier !== 'Auto-detect') pkg.carrier = override.carrier;
+            if (override.estimatedDelivery) pkg.estimatedDelivery = override.estimatedDelivery;
         }
-
-        html += `
-            <div class="${classes}" data-date="${key}" onclick="toggleCalendarFilter('${key}')">
-                <div class="cal-weekday">${weekdays[d.getDay()]}</div>
-                <div class="cal-num">${d.getDate()}</div>
-                <div class="cal-month">${months[d.getMonth()]}</div>
-                <div class="cal-dot-row">${dotsHtml}</div>
-            </div>
-        `;
+        merged.push(pkg);
     });
 
-    html += '</div></div>';
-    el.innerHTML = html;
+    // Add manual packages (not already in synced list)
+    const syncedKeys = new Set(PACKAGES.map(pkgKey));
+    manual.forEach(p => {
+        const key = pkgKey(p);
+        if (deleted.has(key) || syncedKeys.has(key)) return;
+        merged.push({ ...p, _manual: true });
+    });
+
+    return merged;
 }
 
-function toggleCalendarFilter(dateKey) {
-    if (calendarFilterDate === dateKey) {
-        calendarFilterDate = null;
+// Toast notification
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// ---- Status Actions ----
+function setStatus(key, status) {
+    // Check if it's a manual package
+    const manual = getManualPackages();
+    const mi = manual.findIndex(p => pkgKey(p) === key);
+    if (mi >= 0) {
+        manual[mi].status = status;
+        saveManualPackages(manual);
     } else {
-        calendarFilterDate = dateKey;
+        const overrides = getOverrides();
+        overrides[key] = overrides[key] || {};
+        overrides[key].status = status;
+        saveOverrides(overrides);
     }
-    renderCalendar();
-    renderPackages();
+    const labels = { 'delivered': 'Marked as delivered', 'in-transit': 'Marked as in transit', 'pending': 'Marked as pending' };
+    showToast(labels[status] || 'Status updated');
+    renderAll();
 }
 
-// Render packages
-function renderPackages() {
-    const el = document.getElementById('packages');
-
-    let filtered = PACKAGES;
-    if (calendarFilterDate) {
-        filtered = PACKAGES.filter(p => p.estimatedDelivery === calendarFilterDate);
+function deletePackage(key, name) {
+    if (!confirm('Remove "' + name + '" from the tracker?')) return;
+    // If manual, remove from manual list
+    const manual = getManualPackages();
+    const mi = manual.findIndex(p => pkgKey(p) === key);
+    if (mi >= 0) {
+        manual.splice(mi, 1);
+        saveManualPackages(manual);
+    } else {
+        // For synced packages, add to deleted list
+        const deleted = getDeleted();
+        if (!deleted.includes(key)) {
+            deleted.push(key);
+            saveDeleted(deleted);
+        }
     }
+    showToast('Removed ' + name);
+    renderAll();
+}
 
-    if (!PACKAGES.length) {
-        el.innerHTML = `<div class="empty"><div class="empty-icon">&#128230;</div><h3>No packages yet</h3><p>Forward shipping emails to get started</p></div>`;
-        return;
+function undoDelete(key) {
+    const deleted = getDeleted();
+    const i = deleted.indexOf(key);
+    if (i >= 0) {
+        deleted.splice(i, 1);
+        saveDeleted(deleted);
+        showToast('Restored');
+        renderAll();
     }
-
-    const order = { 'in-transit': 0, 'pending': 1, 'delivered': 2 };
-    const sorted = [...filtered].sort((a, b) => {
-        const sd = (order[a.status] ?? 3) - (order[b.status] ?? 3);
-        return sd !== 0 ? sd : new Date(a.estimatedDelivery) - new Date(b.estimatedDelivery);
-    });
-
-    const filterLabel = calendarFilterDate ? (() => {
-        const d = new Date(calendarFilterDate + 'T00:00:00');
-        return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-    })() : null;
-
-    el.innerHTML = `
-        <div class="timeline-header">
-            <h2>Shipments</h2>
-            <span class="count">
-                ${filterLabel
-                    ? `<span class="filter-badge" onclick="toggleCalendarFilter('${calendarFilterDate}')">${filterLabel} &times;</span>`
-                    : `${PACKAGES.length} packages`
-                }
-            </span>
-        </div>
-        <div class="pkg-list">
-            ${sorted.length === 0
-                ? `<div class="empty" style="padding:32px 20px"><h3>No deliveries on this day</h3><p>Click the date again to show all packages</p></div>`
-                : sorted.map((p, i) => `
-                <div class="pkg animate-in" style="animation-delay:${0.1 + i * 0.06}s">
-                    <div class="pkg-inner">
-                        <div class="carrier ${carrierClass(p.carrier)}">${carrierIcon(p.carrier)}</div>
-                        <div class="pkg-body">
-                            <div class="pkg-name">${p.name}</div>
-                            <div class="pkg-meta">
-                                <span>${p.carrier}</span>
-                                ${p.tracking ? `<span class="dot">&middot;</span><a href="${p.trackingUrl || '#'}" target="_blank" rel="noopener">${p.tracking}</a>` : (p.orderNumber ? `<span class="dot">&middot;</span><span>Order ${p.orderNumber}</span>` : '')}
-                                ${!p.tracking ? `<span class="dot">&middot;</span><button class="add-tracking-btn" onclick="event.stopPropagation();openUpdateTracking(${PACKAGES.indexOf(p)})" title="Add tracking number"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Tracking</button>` : ''}
-                            </div>
-                            ${renderItemChips(p.items)}
-                        </div>
-                        <div class="pkg-right">
-                            <span class="pill ${p.status}"><span class="dot-indicator"></span>${p.status.replace('-', ' ')}</span>
-                            <div class="eta">${p.status === 'delivered' ? 'Arrived' : 'Est.'} ${formatDate(p.estimatedDelivery)}</div>
-                        </div>
-                    </div>
-                    <div class="progress-strip"><div class="bar ${p.status}" style="width:${progress(p.status)}%"></div></div>
-                </div>
-            `).join('')}
-        </div>
-    `;
-
-    // Bind expand-more handlers
-    document.querySelectorAll('.item-chip.more').forEach(chip => {
-        chip.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const container = this.parentElement;
-            const pkgCard = container.closest('.pkg');
-            const pkgName = pkgCard.querySelector('.pkg-name').textContent;
-            const pkg = PACKAGES.find(p => p.name === pkgName);
-            if (!pkg) return;
-            container.innerHTML = pkg.items.map(item =>
-                `<span class="item-chip" title="${item}">${item}</span>`
-            ).join('');
-        });
-    });
 }
 
 // ---- Add Package Modal ----
 let isUpdateMode = false;
-let updatePackageIndex = -1;
+let updatePackageKey = null;
 
 function openAddModal() {
     isUpdateMode = false;
+    updatePackageKey = null;
     document.getElementById('addPkgForm').reset();
+    document.getElementById('pkgStatus').value = 'pending';
     document.getElementById('carrierDetected').classList.remove('visible');
     document.querySelector('.modal-title').textContent = 'Add a Package';
-    document.querySelector('.modal-subtitle').textContent = "Enter tracking details and we'll email it for processing.";
+    document.getElementById('modalSubtitle').textContent = 'Enter package details to add it to the tracker.';
+    document.getElementById('submitBtnText').textContent = 'Add Package';
     document.getElementById('addModal').classList.add('open');
     document.body.style.overflow = 'hidden';
     setTimeout(() => document.getElementById('pkgName').focus(), 100);
 }
 
-function openUpdateTracking(index) {
-    const p = PACKAGES[index];
+function openEditPackage(key) {
+    const all = getAllPackages();
+    const p = all.find(pkg => pkgKey(pkg) === key);
     if (!p) return;
     isUpdateMode = true;
-    updatePackageIndex = index;
+    updatePackageKey = key;
 
-    document.querySelector('.modal-title').textContent = 'Update Tracking';
-    document.querySelector('.modal-subtitle').textContent = 'Add a tracking number for ' + p.name;
+    document.querySelector('.modal-title').textContent = 'Edit Package';
+    document.getElementById('modalSubtitle').textContent = 'Update details for ' + p.name;
+    document.getElementById('submitBtnText').textContent = 'Save Changes';
 
     document.getElementById('pkgName').value = p.name;
     document.getElementById('pkgTracking').value = p.tracking || '';
     document.getElementById('pkgCarrier').value = p.carrier || 'Auto-detect';
     document.getElementById('pkgStore').value = p.from || '';
     document.getElementById('pkgDelivery').value = p.estimatedDelivery || '';
+    document.getElementById('pkgStatus').value = p.status || 'pending';
 
     document.getElementById('addModal').classList.add('open');
     document.body.style.overflow = 'hidden';
-    setTimeout(() => {
-        const trackingInput = document.getElementById('pkgTracking');
-        trackingInput.focus();
-        trackingInput.select();
-    }, 100);
+    setTimeout(() => document.getElementById('pkgName').focus(), 100);
 }
 
 function closeAddModal() {
     document.getElementById('addModal').classList.remove('open');
     document.body.style.overflow = '';
     isUpdateMode = false;
-    updatePackageIndex = -1;
+    updatePackageKey = null;
 }
 
-// Close modal on Escape key
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') closeAddModal();
 });
 
-// Auto-detect carrier from tracking number
 function detectCarrier(value) {
     const v = value.trim();
     const select = document.getElementById('pkgCarrier');
@@ -1622,11 +1679,16 @@ function detectCarrier(value) {
         badgeText.textContent = detected + ' detected';
     } else {
         badge.classList.remove('visible');
-        // Only reset if it was auto-set (still on Auto-detect or a detected value)
-        if (select.value === 'Auto-detect') {
-            // leave as is
-        }
     }
+}
+
+function buildTrackingUrl(carrier, tracking) {
+    if (!tracking) return '';
+    const c = carrier.toLowerCase();
+    if (c.includes('ups')) return 'https://www.ups.com/track?tracknum=' + tracking;
+    if (c.includes('fedex')) return 'https://www.fedex.com/fedextrack/?trknbr=' + tracking;
+    if (c.includes('usps')) return 'https://tools.usps.com/go/TrackConfirmAction?tLabels=' + tracking;
+    return '';
 }
 
 function submitAddPkg(e) {
@@ -1634,39 +1696,266 @@ function submitAddPkg(e) {
 
     const name = document.getElementById('pkgName').value.trim();
     const tracking = document.getElementById('pkgTracking').value.trim();
-    const carrier = document.getElementById('pkgCarrier').value;
+    let carrier = document.getElementById('pkgCarrier').value;
     const store = document.getElementById('pkgStore').value.trim();
     const delivery = document.getElementById('pkgDelivery').value;
+    const status = document.getElementById('pkgStatus').value;
 
-    const subject = encodeURIComponent((isUpdateMode ? 'TRACKING UPDATE: ' : 'TRACKING: ') + name);
+    if (carrier === 'Auto-detect') carrier = 'Other';
 
-    let bodyLines = [];
-    bodyLines.push('ITEM: ' + name);
-    bodyLines.push('TRACKING: ' + (tracking || '(none)'));
-    bodyLines.push('CARRIER: ' + carrier);
-    bodyLines.push('STORE: ' + (store || '(none)'));
-    bodyLines.push('DELIVERY: ' + (delivery || '(none)'));
-    if (isUpdateMode && updatePackageIndex >= 0) {
-        const orderNum = PACKAGES[updatePackageIndex].orderNumber || '';
-        if (orderNum) bodyLines.push('ORDER: ' + orderNum);
+    if (isUpdateMode && updatePackageKey) {
+        // Update existing package
+        const manual = getManualPackages();
+        const mi = manual.findIndex(p => pkgKey(p) === updatePackageKey);
+        if (mi >= 0) {
+            // Update manual package directly
+            manual[mi].name = name;
+            manual[mi].tracking = tracking;
+            manual[mi].trackingUrl = buildTrackingUrl(carrier, tracking);
+            manual[mi].carrier = carrier;
+            manual[mi].from = store;
+            manual[mi].estimatedDelivery = delivery;
+            manual[mi].status = status;
+            saveManualPackages(manual);
+        } else {
+            // Synced package: save overrides
+            const overrides = getOverrides();
+            overrides[updatePackageKey] = {
+                status,
+                tracking: tracking || undefined,
+                trackingUrl: buildTrackingUrl(carrier, tracking) || undefined,
+                carrier: carrier !== 'Other' ? carrier : undefined,
+                estimatedDelivery: delivery || undefined
+            };
+            saveOverrides(overrides);
+        }
+        showToast('Updated ' + name);
+    } else {
+        // Add new manual package
+        const pkg = {
+            name: (store ? store + ' - ' : '') + name,
+            carrier,
+            tracking,
+            trackingUrl: buildTrackingUrl(carrier, tracking),
+            status,
+            estimatedDelivery: delivery,
+            from: store,
+            items: [name],
+            orderNumber: 'MANUAL-' + Date.now()
+        };
+        const manual = getManualPackages();
+        manual.push(pkg);
+        saveManualPackages(manual);
+        showToast('Added ' + pkg.name);
     }
 
-    const body = encodeURIComponent(bodyLines.join('\n'));
-    const mailto = 'mailto:mwhite57+drewshipping@gmail.com?subject=' + subject + '&body=' + body;
-
-    window.location.href = mailto;
-
-    // Reset form and close after a short delay
-    setTimeout(() => {
-        document.getElementById('addPkgForm').reset();
-        document.getElementById('carrierDetected').classList.remove('visible');
-        closeAddModal();
-    }, 500);
+    document.getElementById('addPkgForm').reset();
+    document.getElementById('carrierDetected').classList.remove('visible');
+    closeAddModal();
+    renderAll();
 }
 
-renderStats();
-renderCalendar();
-renderPackages();
+function toggleCalendarFilter(dateKey) {
+    if (calendarFilterDate === dateKey) {
+        calendarFilterDate = null;
+    } else {
+        calendarFilterDate = dateKey;
+    }
+    renderAll();
+}
+
+// ---- Render with merged data ----
+function renderAll() {
+    renderStats();
+    renderCalendar();
+    renderPackages();
+}
+
+function renderStats() {
+    const pkgs = getAllPackages();
+    const t = pkgs.length;
+    const tr = pkgs.filter(p => p.status === 'in-transit').length;
+    const d = pkgs.filter(p => p.status === 'delivered').length;
+    const pe = pkgs.filter(p => p.status === 'pending').length;
+
+    document.getElementById('stats').innerHTML = `
+        <div class="stat total animate-in" style="animation-delay:0.05s"><div class="num">${t}</div><div class="lbl">Total</div></div>
+        <div class="stat transit animate-in" style="animation-delay:0.1s"><div class="num">${tr}</div><div class="lbl">In Transit</div></div>
+        <div class="stat delivered animate-in" style="animation-delay:0.15s"><div class="num">${d}</div><div class="lbl">Delivered</div></div>
+        <div class="stat pending animate-in" style="animation-delay:0.2s"><div class="num">${pe}</div><div class="lbl">Pending</div></div>
+    `;
+}
+
+function renderCalendar() {
+    const el = document.getElementById('calendar');
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const pkgs = getAllPackages();
+
+    const deliveryMap = {};
+    pkgs.forEach(p => {
+        const key = p.estimatedDelivery;
+        if (!deliveryMap[key]) deliveryMap[key] = [];
+        deliveryMap[key].push(p);
+    });
+
+    const days = [];
+    for (let i = 0; i < 14; i++) {
+        const d = new Date(today);
+        d.setDate(d.getDate() + i);
+        days.push(d);
+    }
+
+    const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const rangeStart = days[0].toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const rangeEnd = days[days.length - 1].toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+    let html = `
+        <div class="calendar-section animate-in" style="animation-delay:0.22s">
+            <div class="calendar-header">
+                <h2>Delivery Calendar</h2>
+                <span class="cal-range">${rangeStart} - ${rangeEnd}</span>
+            </div>
+            <div class="calendar-strip">
+    `;
+
+    days.forEach(d => {
+        const key = toDateKey(d);
+        const isToday = key === toDateKey(today);
+        const isPast = d < today;
+        const dpkgs = deliveryMap[key] || [];
+        const hasDeliveries = dpkgs.length > 0;
+        const isActive = calendarFilterDate === key;
+
+        let classes = 'cal-day';
+        if (isToday) classes += ' today';
+        if (isPast && !isToday) classes += ' past';
+        if (!hasDeliveries && !isToday) classes += ' no-deliveries';
+        if (isActive) classes += ' active';
+
+        let dotsHtml = '';
+        if (hasDeliveries) {
+            if (dpkgs.length <= 3) {
+                dotsHtml = dpkgs.map(p => `<span class="cal-dot ${p.status}"></span>`).join('');
+            } else {
+                dotsHtml = `<span class="cal-count">${dpkgs.length}</span>`;
+            }
+        }
+
+        html += `
+            <div class="${classes}" data-date="${key}" onclick="toggleCalendarFilter('${key}')">
+                <div class="cal-weekday">${weekdays[d.getDay()]}</div>
+                <div class="cal-num">${d.getDate()}</div>
+                <div class="cal-month">${months[d.getMonth()]}</div>
+                <div class="cal-dot-row">${dotsHtml}</div>
+            </div>
+        `;
+    });
+
+    html += '</div></div>';
+    el.innerHTML = html;
+}
+
+function renderPackages() {
+    const el = document.getElementById('packages');
+    const pkgs = getAllPackages();
+
+    let filtered = pkgs;
+    if (calendarFilterDate) {
+        filtered = pkgs.filter(p => p.estimatedDelivery === calendarFilterDate);
+    }
+
+    if (!pkgs.length) {
+        el.innerHTML = `<div class="empty"><div class="empty-icon">&#128230;</div><h3>No packages yet</h3><p>Forward shipping emails or add packages manually</p></div>`;
+        return;
+    }
+
+    const order = { 'in-transit': 0, 'pending': 1, 'delivered': 2 };
+    const sorted = [...filtered].sort((a, b) => {
+        const sd = (order[a.status] ?? 3) - (order[b.status] ?? 3);
+        return sd !== 0 ? sd : new Date(a.estimatedDelivery) - new Date(b.estimatedDelivery);
+    });
+
+    const filterLabel = calendarFilterDate ? (() => {
+        const d = new Date(calendarFilterDate + 'T00:00:00');
+        return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    })() : null;
+
+    el.innerHTML = `
+        <div class="timeline-header">
+            <h2>Shipments</h2>
+            <span class="count">
+                ${filterLabel
+                    ? `<span class="filter-badge" onclick="toggleCalendarFilter('${calendarFilterDate}')">${filterLabel} &times;</span>`
+                    : `${pkgs.length} packages`
+                }
+            </span>
+        </div>
+        <div class="pkg-list">
+            ${sorted.length === 0
+                ? `<div class="empty" style="padding:32px 20px"><h3>No deliveries on this day</h3><p>Click the date again to show all packages</p></div>`
+                : sorted.map((p, i) => {
+                    const key = pkgKey(p);
+                    const keyEsc = key.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                    const nameEsc = p.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
+                    // Build action buttons based on current status
+                    let actions = '';
+                    if (p.status !== 'delivered') {
+                        actions += `<button class="pkg-action-btn deliver" onclick="event.stopPropagation();setStatus('${keyEsc}','delivered')" title="Mark as delivered"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Delivered</button>`;
+                    }
+                    if (p.status !== 'in-transit') {
+                        actions += `<button class="pkg-action-btn transit" onclick="event.stopPropagation();setStatus('${keyEsc}','in-transit')" title="Mark as in transit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>In Transit</button>`;
+                    }
+                    if (p.status !== 'pending') {
+                        actions += `<button class="pkg-action-btn pend" onclick="event.stopPropagation();setStatus('${keyEsc}','pending')" title="Mark as pending"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Pending</button>`;
+                    }
+                    actions += `<button class="pkg-action-btn" onclick="event.stopPropagation();openEditPackage('${keyEsc}')" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</button>`;
+                    actions += `<button class="pkg-action-btn delete" onclick="event.stopPropagation();deletePackage('${keyEsc}','${nameEsc}')" title="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>`;
+
+                    return `
+                <div class="pkg animate-in" style="animation-delay:${0.1 + i * 0.06}s">
+                    <div class="pkg-inner">
+                        <div class="carrier ${carrierClass(p.carrier)}">${carrierIcon(p.carrier)}</div>
+                        <div class="pkg-body">
+                            <div class="pkg-name">${p.name}${p._manual ? '<span class="manual-badge">MANUAL</span>' : ''}</div>
+                            <div class="pkg-meta">
+                                <span>${p.carrier}</span>
+                                ${p.tracking ? `<span class="dot">&middot;</span><a href="${p.trackingUrl || '#'}" target="_blank" rel="noopener">${p.tracking}</a>` : (p.orderNumber && !p.orderNumber.startsWith('MANUAL-') ? `<span class="dot">&middot;</span><span>Order ${p.orderNumber}</span>` : '')}
+                            </div>
+                            ${renderItemChips(p.items)}
+                            <div class="pkg-actions">${actions}</div>
+                        </div>
+                        <div class="pkg-right">
+                            <span class="pill ${p.status}"><span class="dot-indicator"></span>${p.status.replace('-', ' ')}</span>
+                            <div class="eta">${p.status === 'delivered' ? 'Arrived' : 'Est.'} ${formatDate(p.estimatedDelivery)}</div>
+                        </div>
+                    </div>
+                    <div class="progress-strip"><div class="bar ${p.status}" style="width:${progress(p.status)}%"></div></div>
+                </div>
+            `}).join('')}
+        </div>
+    `;
+
+    // Bind expand-more handlers
+    document.querySelectorAll('.item-chip.more').forEach(chip => {
+        chip.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const container = this.parentElement;
+            const pkgCard = container.closest('.pkg');
+            const pkgName = pkgCard.querySelector('.pkg-name').textContent.replace('MANUAL', '').trim();
+            const all = getAllPackages();
+            const pkg = all.find(p => p.name === pkgName);
+            if (!pkg) return;
+            container.innerHTML = pkg.items.map(item =>
+                `<span class="item-chip" title="${item}">${item}</span>`
+            ).join('');
+        });
+    });
+}
+
+renderAll();
 document.getElementById('footer').textContent = `Last synced ${new Date(LAST_UPDATED).toLocaleString()}`;
 </script>
 
