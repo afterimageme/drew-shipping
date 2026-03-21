@@ -102,8 +102,8 @@
         }
 
         .hero-icon {
-            width: 80px;
-            height: 80px;
+            width: 120px;
+            height: 120px;
             margin: 0 auto 20px;
             display: flex;
             align-items: center;
@@ -139,26 +139,6 @@
             font-weight: 400;
         }
 
-        /* Drew peek on title hover */
-        .hero h1::after {
-            content: '';
-            position: absolute;
-            right: -36px;
-            top: 50%;
-            transform: translateY(-50%) scale(0.8);
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: url('drew.jpg') center 15% / cover;
-            opacity: 0;
-            transition: opacity 0.4s, transform 0.4s;
-            border: 1.5px solid var(--gold);
-            pointer-events: none;
-        }
-        .hero h1:hover::after {
-            opacity: 0.7;
-            transform: translateY(-50%) scale(1);
-        }
 
         /* ---- Sync Button ---- */
         .sync-btn {
@@ -1231,27 +1211,26 @@
 <div class="page">
     <div class="hero animate-in">
         <div class="hero-icon">
-            <svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            <svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <defs>
-                    <clipPath id="labelClip"><circle cx="40" cy="40" r="14.5"/></clipPath>
+                    <clipPath id="labelClip"><circle cx="60" cy="60" r="30"/></clipPath>
                 </defs>
                 <!-- Outer disc -->
-                <circle cx="40" cy="40" r="38" fill="#1a1826" stroke="#d4a24e" stroke-width="1.5"/>
+                <circle cx="60" cy="60" r="57" fill="#1a1826" stroke="#d4a24e" stroke-width="1.5"/>
                 <!-- Groove rings -->
-                <circle cx="40" cy="40" r="34" fill="none" stroke="#252336" stroke-width="0.5"/>
-                <circle cx="40" cy="40" r="31" fill="none" stroke="#3d3852" stroke-width="0.3"/>
-                <circle cx="40" cy="40" r="28" fill="none" stroke="#252336" stroke-width="0.5"/>
-                <circle cx="40" cy="40" r="25" fill="none" stroke="#3d3852" stroke-width="0.3"/>
-                <circle cx="40" cy="40" r="22" fill="none" stroke="#252336" stroke-width="0.5"/>
-                <circle cx="40" cy="40" r="19" fill="none" stroke="#3d3852" stroke-width="0.3"/>
+                <circle cx="60" cy="60" r="52" fill="none" stroke="#252336" stroke-width="0.5"/>
+                <circle cx="60" cy="60" r="48" fill="none" stroke="#3d3852" stroke-width="0.3"/>
+                <circle cx="60" cy="60" r="44" fill="none" stroke="#252336" stroke-width="0.5"/>
+                <circle cx="60" cy="60" r="40" fill="none" stroke="#3d3852" stroke-width="0.3"/>
+                <circle cx="60" cy="60" r="36" fill="none" stroke="#252336" stroke-width="0.5"/>
                 <!-- Label area — Drew's face -->
-                <circle cx="40" cy="40" r="15" fill="#8b2252"/>
-                <image href="drew.jpg" x="25.5" y="22" width="29" height="36" clip-path="url(#labelClip)" opacity="0.85"/>
-                <circle cx="40" cy="40" r="14.5" fill="none" stroke="rgba(212,162,78,0.4)" stroke-width="0.8"/>
+                <circle cx="60" cy="60" r="31" fill="#c4882e"/>
+                <image href="drew-avatar.png" x="30" y="30" width="60" height="60" clip-path="url(#labelClip)" preserveAspectRatio="xMidYMid slice" opacity="0.95"/>
+                <circle cx="60" cy="60" r="30" fill="none" stroke="rgba(212,162,78,0.5)" stroke-width="1"/>
                 <!-- Spindle hole -->
-                <circle cx="40" cy="40" r="3" fill="#0f0e17" stroke="#d4a24e" stroke-width="0.8"/>
+                <circle cx="60" cy="60" r="4" fill="#0f0e17" stroke="#d4a24e" stroke-width="0.8"/>
                 <!-- Shine highlight -->
-                <ellipse cx="30" cy="30" rx="12" ry="8" fill="rgba(255,255,255,0.03)" transform="rotate(-30 30 30)"/>
+                <ellipse cx="45" cy="45" rx="18" ry="12" fill="rgba(255,255,255,0.03)" transform="rotate(-30 45 45)"/>
             </svg>
         </div>
         <h1><span class="accent">Drew's Long &amp; Winding</span> Move</h1>
@@ -1625,9 +1604,9 @@ function carrierIcon(c) {
 }
 
 function formatDate(dateStr) {
-    if (!dateStr) return '<span style="opacity:0.5;font-style:italic">strawberry fields</span>';
+    if (!dateStr) return '<span style="opacity:0.5;font-style:italic">TBD</span>';
     const d = new Date(dateStr + 'T00:00:00');
-    if (isNaN(d.getTime())) return '<span style="opacity:0.5;font-style:italic">strawberry fields</span>';
+    if (isNaN(d.getTime())) return '<span style="opacity:0.5;font-style:italic">TBD</span>';
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const diff = Math.round((d - today) / 86400000);
@@ -1770,7 +1749,7 @@ function setStatus(key, status) {
         overrides[key].status = status;
         saveOverrides(overrides);
     }
-    const labels = { 'delivered': 'Here comes the sun!', 'in-transit': 'We all live in a yellow submarine', 'pending': 'Let it be...' };
+    const labels = { 'delivered': 'Marked as delivered', 'in-transit': 'Marked as in transit', 'pending': 'Marked as pending' };
     showToast(labels[status] || 'Status updated');
     renderAll();
 }
@@ -1981,10 +1960,10 @@ function renderStats() {
     const pe = pkgs.filter(p => p.status === 'pending').length;
 
     document.getElementById('stats').innerHTML = `
-        <div class="stat total animate-in" style="animation-delay:0.05s"><div class="num">${t}</div><div class="lbl">All Together Now</div></div>
-        <div class="stat transit animate-in" style="animation-delay:0.1s"><div class="num">${tr}</div><div class="lbl">Yellow Submarine</div></div>
-        <div class="stat delivered animate-in" style="animation-delay:0.15s"><div class="num">${d}</div><div class="lbl">Here Comes the Sun</div></div>
-        <div class="stat pending animate-in" style="animation-delay:0.2s"><div class="num">${pe}</div><div class="lbl">Let It Be</div></div>
+        <div class="stat total animate-in" style="animation-delay:0.05s"><div class="num">${t}</div><div class="lbl">Total</div></div>
+        <div class="stat transit animate-in" style="animation-delay:0.1s"><div class="num">${tr}</div><div class="lbl">In Transit</div></div>
+        <div class="stat delivered animate-in" style="animation-delay:0.15s"><div class="num">${d}</div><div class="lbl">Delivered</div></div>
+        <div class="stat pending animate-in" style="animation-delay:0.2s"><div class="num">${pe}</div><div class="lbl">Pending</div></div>
     `;
 }
 
@@ -2130,7 +2109,7 @@ function renderPackages() {
                             <div class="pkg-actions">${actions}</div>
                         </div>
                         <div class="pkg-right">
-                            <span class="pill ${p.status}"><span class="dot-indicator"></span>${p.status === 'delivered' ? 'here comes the sun' : p.status === 'in-transit' ? 'yellow submarine' : 'let it be'}</span>
+                            <span class="pill ${p.status}"><span class="dot-indicator"></span>${p.status === 'delivered' ? 'Delivered' : p.status === 'in-transit' ? 'In Transit' : 'Pending'}</span>
                             <div class="eta">${p.status === 'delivered' ? 'Arrived' : 'Est.'} ${formatDate(p.estimatedDelivery)}</div>
                         </div>
                     </div>
@@ -2158,7 +2137,102 @@ function renderPackages() {
 }
 
 renderAll();
-document.getElementById('footer').innerHTML = `<img src="drew.jpg" alt="Drew" style="width:20px;height:20px;border-radius:50%;object-fit:cover;object-position:center 15%;vertical-align:-5px;margin-right:4px;opacity:0.6;filter:grayscale(0.3);">Last synced ${new Date(LAST_UPDATED).toLocaleString()} &nbsp;\u00B7&nbsp; With a little help from my friends`;
+document.getElementById('footer').innerHTML = `<img src="drew-avatar.png" alt="Drew" style="width:24px;height:24px;border-radius:50%;object-fit:cover;vertical-align:-6px;margin-right:6px;opacity:0.7;border:1px solid rgba(212,162,78,0.3);" title="Hey Jude">Last synced ${new Date(LAST_UPDATED).toLocaleString()} &nbsp;\u00B7&nbsp; With a little help from my friends`;
+
+// ---- Hidden touches ----
+
+// 1. Click the record to reverse spin direction
+(function() {
+    const record = document.querySelector('.hero-icon');
+    let reversed = false;
+    record.style.cursor = 'pointer';
+    record.addEventListener('click', function() {
+        reversed = !reversed;
+        this.style.animationDirection = reversed ? 'reverse' : 'normal';
+    });
+})();
+
+// 2. Typing "drew" anywhere triggers a brief golden shimmer
+(function() {
+    let buffer = '';
+    document.addEventListener('keypress', function(e) {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
+        buffer += e.key.toLowerCase();
+        if (buffer.length > 10) buffer = buffer.slice(-10);
+        if (buffer.endsWith('drew')) {
+            buffer = '';
+            const shimmer = document.createElement('div');
+            shimmer.style.cssText = 'position:fixed;inset:0;background:radial-gradient(circle at 50% 50%,rgba(212,162,78,0.12),transparent 70%);pointer-events:none;z-index:9999;opacity:0;transition:opacity 0.4s;';
+            document.body.appendChild(shimmer);
+            requestAnimationFrame(() => { shimmer.style.opacity = '1'; });
+            setTimeout(() => { shimmer.style.opacity = '0'; setTimeout(() => shimmer.remove(), 500); }, 800);
+        }
+    });
+})();
+
+// 3. Double-click delivered cards for a tiny celebration burst
+document.addEventListener('dblclick', function(e) {
+    const card = e.target.closest('.pkg');
+    if (!card) return;
+    const pill = card.querySelector('.pill.delivered');
+    if (!pill) return;
+    const rect = pill.getBoundingClientRect();
+    for (let i = 0; i < 6; i++) {
+        const spark = document.createElement('div');
+        const angle = (i / 6) * Math.PI * 2;
+        const dist = 20 + Math.random() * 15;
+        spark.style.cssText = `position:fixed;left:${rect.left + rect.width/2}px;top:${rect.top + rect.height/2}px;width:4px;height:4px;border-radius:50%;background:var(--green);pointer-events:none;z-index:9999;transition:all 0.5s cubic-bezier(0.25,0.46,0.45,0.94);opacity:1;`;
+        document.body.appendChild(spark);
+        requestAnimationFrame(() => {
+            spark.style.transform = `translate(${Math.cos(angle)*dist}px, ${Math.sin(angle)*dist}px)`;
+            spark.style.opacity = '0';
+        });
+        setTimeout(() => spark.remove(), 600);
+    }
+});
+
+// 4. Record spindle hole glows on hover
+(function() {
+    const spindle = document.querySelector('.hero-icon svg circle:last-of-type');
+    if (!spindle) return;
+    const heroIcon = document.querySelector('.hero-icon');
+    heroIcon.addEventListener('mouseenter', () => {
+        spindle.setAttribute('filter', 'url(#spindleGlow)');
+    });
+    heroIcon.addEventListener('mouseleave', () => {
+        spindle.removeAttribute('filter');
+    });
+    // Add glow filter to SVG
+    const svg = document.querySelector('.hero-icon svg');
+    const defs = svg.querySelector('defs');
+    const filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+    filter.setAttribute('id', 'spindleGlow');
+    filter.innerHTML = '<feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>';
+    defs.appendChild(filter);
+})();
+
+// 5. Subtle parallax tilt on package cards
+document.addEventListener('mousemove', function(e) {
+    const cards = document.querySelectorAll('.pkg:hover');
+    cards.forEach(card => {
+        const rect = card.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        card.style.transform = `translateY(-1px) perspective(600px) rotateY(${x * 1.5}deg) rotateX(${-y * 1.5}deg)`;
+    });
+});
+document.addEventListener('mouseleave', function(e) {
+    if (e.target.classList && e.target.classList.contains('pkg')) {
+        e.target.style.transform = '';
+    }
+}, true);
+// Reset tilt when mouse leaves card
+document.addEventListener('mouseout', function(e) {
+    const card = e.target.closest('.pkg');
+    if (card && !card.contains(e.relatedTarget)) {
+        card.style.transform = '';
+    }
+});
 </script>
 
 </body>
