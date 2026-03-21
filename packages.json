@@ -18,7 +18,7 @@
         "tracking": "399714514878",
         "trackingUrl": "https://www.fedex.com/fedextrack/?trknbr=399714514878",
         "status": "in-transit",
-        "estimatedDelivery": "2026-03-21",
+        "estimatedDelivery": "2026-03-22",
         "from": "Ruggable",
         "items": [
             "Aldo Indigo & Ochre Rug by The Local Project - 8'x10'"
@@ -73,7 +73,7 @@
         "tracking": "399734102382",
         "trackingUrl": "https://www.fedex.com/fedextrack/?trknbr=399734102382",
         "status": "in-transit",
-        "estimatedDelivery": "",
+        "estimatedDelivery": "2026-03-22",
         "from": "Ruggable",
         "items": [
             "Inkdrop Lapis Blue Rug by Jonathan Adler - 9'x12'"
@@ -124,8 +124,8 @@
         "carrier": "FedEx",
         "tracking": "515547207616",
         "trackingUrl": "https://www.fedex.com/fedextrack/?trknbr=515547207616",
-        "status": "in-transit",
-        "estimatedDelivery": "",
+        "status": "delivered",
+        "estimatedDelivery": "2026-03-19",
         "from": "Design Within Reach",
         "items": [
             "Emma Fireplace Tools"
@@ -163,8 +163,8 @@
         "carrier": "FedEx",
         "tracking": "516678200594",
         "trackingUrl": "https://www.fedex.com/fedextrack/?trknbr=516678200594",
-        "status": "in-transit",
-        "estimatedDelivery": "",
+        "status": "delivered",
+        "estimatedDelivery": "2026-03-16",
         "from": "Bell Helmets",
         "items": [
             "Bullitt GT Tangerine L",
