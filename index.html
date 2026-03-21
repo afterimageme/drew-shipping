@@ -83,6 +83,18 @@
 
         .page { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 0 20px; }
 
+        /* ---- Sgt Pepper decorative top border ---- */
+        .page > .hero::before {
+            content: '';
+            display: block;
+            width: 120px;
+            height: 3px;
+            margin: 0 auto 0;
+            background: linear-gradient(90deg, transparent, var(--gold), var(--burgundy), var(--gold), transparent);
+            border-radius: 2px;
+            opacity: 0.5;
+        }
+
         /* ---- Hero ---- */
         .hero {
             padding: 48px 0 32px;
@@ -110,6 +122,8 @@
             font-weight: 700;
             letter-spacing: -0.03em;
             line-height: 1.1;
+            position: relative;
+            cursor: default;
         }
 
         .hero h1 .accent {
@@ -123,6 +137,27 @@
             font-size: 15px;
             margin-top: 8px;
             font-weight: 400;
+        }
+
+        /* Drew peek on title hover */
+        .hero h1::after {
+            content: '';
+            position: absolute;
+            right: -36px;
+            top: 50%;
+            transform: translateY(-50%) scale(0.8);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: url('drew.jpg') center 15% / cover;
+            opacity: 0;
+            transition: opacity 0.4s, transform 0.4s;
+            border: 1.5px solid var(--gold);
+            pointer-events: none;
+        }
+        .hero h1:hover::after {
+            opacity: 0.7;
+            transform: translateY(-50%) scale(1);
         }
 
         /* ---- Sync Button ---- */
@@ -491,7 +526,17 @@
             color: var(--text-3);
         }
 
-        .pkg-meta .dot { opacity: 0.3; }
+        .pkg-meta .dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--text-3);
+            opacity: 0.3;
+            box-shadow: inset 0 0 0 1.5px var(--surface), inset 0 0 0 0.5px var(--text-3);
+            font-size: 0;
+            vertical-align: middle;
+        }
 
         .pkg-meta a {
             color: var(--text-2);
@@ -611,6 +656,15 @@
         }
         .progress-strip .bar.pending {
             background: var(--amber);
+        }
+
+        /* ---- Abbey Road progress strip for delivered ---- */
+        .progress-strip .bar.delivered {
+            background: repeating-linear-gradient(
+                90deg,
+                var(--green) 0px, var(--green) 8px,
+                transparent 8px, transparent 12px
+            ) !important;
         }
 
         /* ---- How-to card ---- */
@@ -845,6 +899,97 @@
             border-radius: 4px;
             margin-left: 6px;
             letter-spacing: 0.03em;
+        }
+
+        /* ---- Sgt Pepper star on stat cards ---- */
+        .stat::after {
+            content: '';
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            width: 16px;
+            height: 16px;
+            background: currentColor;
+            opacity: 0.04;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            transition: opacity 0.3s;
+        }
+        .stat:hover::after { opacity: 0.1; }
+
+        /* ---- Floating music notes (CSS-only) ---- */
+        .page::before,
+        .page::after {
+            position: fixed;
+            font-size: 18px;
+            opacity: 0.035;
+            pointer-events: none;
+            z-index: 0;
+            animation: floatNote 20s ease-in-out infinite alternate;
+        }
+        .page::before {
+            content: '\266A';
+            top: 15%;
+            left: 5%;
+        }
+        .page::after {
+            content: '\266B';
+            bottom: 20%;
+            right: 6%;
+            animation-delay: -10s;
+            animation-duration: 25s;
+        }
+        @keyframes floatNote {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0.03; }
+            50% { transform: translateY(-20px) rotate(10deg); opacity: 0.06; }
+            100% { transform: translateY(5px) rotate(-5deg); opacity: 0.03; }
+        }
+
+        /* ---- Yellow Submarine in-transit dot ---- */
+        .pill.in-transit .dot-indicator {
+            width: 8px;
+            height: 5px;
+            border-radius: 40% 40% 50% 50%;
+            background: var(--blue);
+            animation: submarine 3s ease-in-out infinite;
+        }
+        @keyframes submarine {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-2px); }
+        }
+
+        /* ---- Guitar string vibration on in-transit progress bar ---- */
+        .progress-strip .bar.in-transit {
+            position: relative;
+            overflow: visible;
+        }
+        .progress-strip .bar.in-transit::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -1px;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--gold);
+            animation: stringVibe 1.5s ease-in-out infinite;
+        }
+        @keyframes stringVibe {
+            0%, 100% { transform: translateY(0); }
+            25% { transform: translateY(-2px); }
+            75% { transform: translateY(2px); }
+        }
+
+        /* ---- Apple Records silhouette in footer ---- */
+        .footer::before {
+            content: '';
+            display: inline-block;
+            width: 14px;
+            height: 16px;
+            margin-right: 6px;
+            vertical-align: -2px;
+            background: var(--text-3);
+            opacity: 0.4;
+            clip-path: polygon(50% 0%, 55% 0%, 58% 5%, 85% 15%, 95% 35%, 98% 55%, 90% 75%, 75% 90%, 55% 100%, 45% 100%, 25% 90%, 10% 75%, 2% 55%, 5% 35%, 15% 15%, 42% 5%, 45% 0%);
         }
 
         /* ---- Toast notification ---- */
@@ -1086,7 +1231,10 @@
 <div class="page">
     <div class="hero animate-in">
         <div class="hero-icon">
-            <svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+            <svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                <defs>
+                    <clipPath id="labelClip"><circle cx="40" cy="40" r="14.5"/></clipPath>
+                </defs>
                 <!-- Outer disc -->
                 <circle cx="40" cy="40" r="38" fill="#1a1826" stroke="#d4a24e" stroke-width="1.5"/>
                 <!-- Groove rings -->
@@ -1096,11 +1244,10 @@
                 <circle cx="40" cy="40" r="25" fill="none" stroke="#3d3852" stroke-width="0.3"/>
                 <circle cx="40" cy="40" r="22" fill="none" stroke="#252336" stroke-width="0.5"/>
                 <circle cx="40" cy="40" r="19" fill="none" stroke="#3d3852" stroke-width="0.3"/>
-                <!-- Label area -->
+                <!-- Label area — Drew's face -->
                 <circle cx="40" cy="40" r="15" fill="#8b2252"/>
-                <circle cx="40" cy="40" r="14.5" fill="none" stroke="#a03068" stroke-width="0.5"/>
-                <!-- Label text arc hint -->
-                <circle cx="40" cy="40" r="11" fill="none" stroke="rgba(212,162,78,0.3)" stroke-width="0.3"/>
+                <image href="drew.jpg" x="25.5" y="22" width="29" height="36" clip-path="url(#labelClip)" opacity="0.85"/>
+                <circle cx="40" cy="40" r="14.5" fill="none" stroke="rgba(212,162,78,0.4)" stroke-width="0.8"/>
                 <!-- Spindle hole -->
                 <circle cx="40" cy="40" r="3" fill="#0f0e17" stroke="#d4a24e" stroke-width="0.8"/>
                 <!-- Shine highlight -->
@@ -1129,7 +1276,7 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;">
                     <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
                 </svg>
-                Shopping Intervention
+                Can't Buy Me Love
             </a>
         </div>
     </div>
@@ -1139,7 +1286,7 @@
     <div id="packages"></div>
 
     <div class="how-to animate-in" style="animation-delay: 0.3s">
-        <div class="how-title">Add packages</div>
+        <div class="how-title">Come Together (and add packages)</div>
         <p>Forward any shipping or tracking email to</p>
         <div class="email-pill" onclick="navigator.clipboard.writeText('mwhite57+drewshipping@gmail.com').then(()=>{this.querySelector('.copy-text').textContent='Copied!'})">
             <span class="copy-text">mwhite57+drewshipping@gmail.com</span>
@@ -1478,9 +1625,9 @@ function carrierIcon(c) {
 }
 
 function formatDate(dateStr) {
-    if (!dateStr) return '<span style="opacity:0.5">TBD</span>';
+    if (!dateStr) return '<span style="opacity:0.5;font-style:italic">strawberry fields</span>';
     const d = new Date(dateStr + 'T00:00:00');
-    if (isNaN(d.getTime())) return '<span style="opacity:0.5">TBD</span>';
+    if (isNaN(d.getTime())) return '<span style="opacity:0.5;font-style:italic">strawberry fields</span>';
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const diff = Math.round((d - today) / 86400000);
@@ -1623,7 +1770,7 @@ function setStatus(key, status) {
         overrides[key].status = status;
         saveOverrides(overrides);
     }
-    const labels = { 'delivered': 'Marked as delivered', 'in-transit': 'Marked as in transit', 'pending': 'Marked as pending' };
+    const labels = { 'delivered': 'Here comes the sun!', 'in-transit': 'We all live in a yellow submarine', 'pending': 'Let it be...' };
     showToast(labels[status] || 'Status updated');
     renderAll();
 }
@@ -1669,8 +1816,8 @@ function openAddModal() {
     document.getElementById('addPkgForm').reset();
     document.getElementById('pkgStatus').value = 'pending';
     document.getElementById('carrierDetected').classList.remove('visible');
-    document.querySelector('.modal-title').textContent = 'Add a Package';
-    document.getElementById('modalSubtitle').textContent = 'Enter package details to add it to the tracker.';
+    document.querySelector('.modal-title').textContent = 'Get Back (with a new package)';
+    document.getElementById('modalSubtitle').textContent = 'All you need is love... and a tracking number.';
     document.getElementById('submitBtnText').textContent = 'Add Package';
     document.getElementById('addModal').classList.add('open');
     document.body.style.overflow = 'hidden';
@@ -1684,7 +1831,7 @@ function openEditPackage(key) {
     isUpdateMode = true;
     updatePackageKey = key;
 
-    document.querySelector('.modal-title').textContent = 'Edit Package';
+    document.querySelector('.modal-title').textContent = 'Revolution (edit package)';
     document.getElementById('modalSubtitle').textContent = 'Update details for ' + p.name;
     document.getElementById('submitBtnText').textContent = 'Save Changes';
 
@@ -1834,10 +1981,10 @@ function renderStats() {
     const pe = pkgs.filter(p => p.status === 'pending').length;
 
     document.getElementById('stats').innerHTML = `
-        <div class="stat total animate-in" style="animation-delay:0.05s"><div class="num">${t}</div><div class="lbl">Total</div></div>
-        <div class="stat transit animate-in" style="animation-delay:0.1s"><div class="num">${tr}</div><div class="lbl">In Transit</div></div>
-        <div class="stat delivered animate-in" style="animation-delay:0.15s"><div class="num">${d}</div><div class="lbl">Delivered</div></div>
-        <div class="stat pending animate-in" style="animation-delay:0.2s"><div class="num">${pe}</div><div class="lbl">Pending</div></div>
+        <div class="stat total animate-in" style="animation-delay:0.05s"><div class="num">${t}</div><div class="lbl">All Together Now</div></div>
+        <div class="stat transit animate-in" style="animation-delay:0.1s"><div class="num">${tr}</div><div class="lbl">Yellow Submarine</div></div>
+        <div class="stat delivered animate-in" style="animation-delay:0.15s"><div class="num">${d}</div><div class="lbl">Here Comes the Sun</div></div>
+        <div class="stat pending animate-in" style="animation-delay:0.2s"><div class="num">${pe}</div><div class="lbl">Let It Be</div></div>
     `;
 }
 
@@ -1869,7 +2016,7 @@ function renderCalendar() {
     let html = `
         <div class="calendar-section animate-in" style="animation-delay:0.22s">
             <div class="calendar-header">
-                <h2>Delivery Calendar</h2>
+                <h2>Eight Days a Week</h2>
                 <span class="cal-range">${rangeStart} - ${rangeEnd}</span>
             </div>
             <div class="calendar-strip">
@@ -1922,7 +2069,7 @@ function renderPackages() {
     }
 
     if (!pkgs.length) {
-        el.innerHTML = `<div class="empty"><div class="empty-icon">&#128230;</div><h3>No packages yet</h3><p>Forward shipping emails or add packages manually</p></div>`;
+        el.innerHTML = `<div class="empty"><div class="empty-icon"><img src="drew.jpg" alt="Drew" style="width:40px;height:40px;border-radius:12px;object-fit:cover;object-position:center 15%;opacity:0.7;"></div><h3>Let It Be...</h3><p>Drew's waiting on packages. Forward shipping emails or add one manually.</p></div>`;
         return;
     }
 
@@ -1939,7 +2086,7 @@ function renderPackages() {
 
     el.innerHTML = `
         <div class="timeline-header">
-            <h2>Shipments</h2>
+            <h2>The Shipping Album</h2>
             <span class="count">
                 ${filterLabel
                     ? `<span class="filter-badge" onclick="toggleCalendarFilter('${calendarFilterDate}')">${filterLabel} &times;</span>`
@@ -1949,7 +2096,7 @@ function renderPackages() {
         </div>
         <div class="pkg-list">
             ${sorted.length === 0
-                ? `<div class="empty" style="padding:32px 20px"><h3>No deliveries on this day</h3><p>Click the date again to show all packages</p></div>`
+                ? `<div class="empty" style="padding:32px 20px"><h3>Nothing to see here</h3><p>Tomorrow never knows... click the date again to show all packages</p></div>`
                 : sorted.map((p, i) => {
                     const key = pkgKey(p);
                     const keyEsc = key.replace(/'/g, "\\'").replace(/"/g, '&quot;');
@@ -1977,13 +2124,13 @@ function renderPackages() {
                             <div class="pkg-name">${p.name}${p._manual ? '<span class="manual-badge">MANUAL</span>' : ''}</div>
                             <div class="pkg-meta">
                                 <span>${p.carrier}</span>
-                                ${p.tracking ? `<span class="dot">&middot;</span><a href="${p.trackingUrl || '#'}" target="_blank" rel="noopener">${p.tracking}</a>` : (p.orderNumber && !p.orderNumber.startsWith('MANUAL-') ? `<span class="dot">&middot;</span><span>Order ${p.orderNumber}</span>` : '')}
+                                ${p.tracking ? `<span class="dot">&middot;</span><a href="${p.trackingUrl || '#'}" target="_blank" rel="noopener" title="Ticket to Ride">${p.tracking}</a>` : (p.orderNumber && !p.orderNumber.startsWith('MANUAL-') ? `<span class="dot">&middot;</span><span>Order ${p.orderNumber}</span>` : '')}
                             </div>
                             ${renderItemChips(p.items)}
                             <div class="pkg-actions">${actions}</div>
                         </div>
                         <div class="pkg-right">
-                            <span class="pill ${p.status}"><span class="dot-indicator"></span>${p.status.replace('-', ' ')}</span>
+                            <span class="pill ${p.status}"><span class="dot-indicator"></span>${p.status === 'delivered' ? 'here comes the sun' : p.status === 'in-transit' ? 'yellow submarine' : 'let it be'}</span>
                             <div class="eta">${p.status === 'delivered' ? 'Arrived' : 'Est.'} ${formatDate(p.estimatedDelivery)}</div>
                         </div>
                     </div>
@@ -2011,7 +2158,7 @@ function renderPackages() {
 }
 
 renderAll();
-document.getElementById('footer').textContent = `Last synced ${new Date(LAST_UPDATED).toLocaleString()}`;
+document.getElementById('footer').innerHTML = `<img src="drew.jpg" alt="Drew" style="width:20px;height:20px;border-radius:50%;object-fit:cover;object-position:center 15%;vertical-align:-5px;margin-right:4px;opacity:0.6;filter:grayscale(0.3);">Last synced ${new Date(LAST_UPDATED).toLocaleString()} &nbsp;\u00B7&nbsp; With a little help from my friends`;
 </script>
 
 </body>
