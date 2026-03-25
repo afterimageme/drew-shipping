@@ -301,5 +301,65 @@
             "Metal Shower Curtain Rod, Matte Black"
         ],
         "orderNumber": "360793442227"
+    },
+    {
+        "name": "West Elm - Organic Modular Tables",
+        "carrier": "Other",
+        "tracking": "",
+        "trackingUrl": "",
+        "status": "pending",
+        "estimatedDelivery": "2026-05-06",
+        "from": "West Elm",
+        "items": [
+            "Organic Modular Table, Black on Ash, Large",
+            "Organic Modular Table, Black on Ash, Small"
+        ],
+        "orderNumber": "360833778697",
+        "deliveryMethod": "Flat Rate Delivery"
+    },
+    {
+        "name": "Nordic Knots - Rug Samples",
+        "carrier": "Other",
+        "tracking": "",
+        "trackingUrl": "",
+        "status": "pending",
+        "estimatedDelivery": "2026-03-26",
+        "from": "Nordic Knots",
+        "items": [
+            "Desert - Straw 8\"x8\" sample",
+            "Desert - Earth 8\"x8\" sample",
+            "Desert - Ocean 8\"x8\" sample",
+            "Boho - Sand Mix 8\"x8\" sample x2",
+            "Elder - Navy 8\"x8\" sample"
+        ],
+        "orderNumber": "347151"
+    },
+    {
+        "name": "Undrfoot Rugs - Kieran Watercolor Rug",
+        "carrier": "Other",
+        "tracking": "",
+        "trackingUrl": "",
+        "status": "pending",
+        "estimatedDelivery": "",
+        "from": "Undrfoot Rugs",
+        "items": [
+            "Kieran Watercolor Goldenrod Ombre Area Rug 1.5'x2.5'"
+        ],
+        "orderNumber": "0411859"
+    },
+    {
+        "name": "Thorvald & Design - Bellini + Norman Stools",
+        "carrier": "Other",
+        "tracking": "",
+        "trackingUrl": "",
+        "status": "pending",
+        "estimatedDelivery": "",
+        "from": "Thorvald & Design",
+        "items": [
+            "The Bellini - Cream Chunky Performance Weave (Outdoor), Sectional (Left Chaise)",
+            "The Bellini - Cream Chunky Performance Weave (Outdoor), Two Seater Sofa",
+            "The Norman - Walnut, Counter Stool x6"
+        ],
+        "orderNumber": "TVD27493"
     }
 ]
